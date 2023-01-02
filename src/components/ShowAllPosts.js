@@ -1,11 +1,11 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import Post from "./post/Post";
 
 const ShowAllPosts = () => {
   let [mappedItem, setMappedItems] = useState([]);
-  function fetchAllPosts() {
+  useEffect(() => {
     axios.get("http://localhost:8000/all-posts").then((res) => {
       console.log(res.data);
       let arr = [];
@@ -15,11 +15,11 @@ const ShowAllPosts = () => {
       });
       setMappedItems(arr);
     });
-  }
+  }, []);
 
   return (
     <Fragment>
-      <button onClick={fetchAllPosts}>fetchAllPosts</button>
+      {/* <button onClick={fetchAllPosts}>fetchAllPosts</button> */}
       {mappedItem}
     </Fragment>
   );

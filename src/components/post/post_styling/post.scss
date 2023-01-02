@@ -1,53 +1,77 @@
-.card {
+.post {
     background-color: rgb(220, 220, 220);
     background-color: white;
     color: black;
-    width: 400px;
+    width: 327px;
     overflow: hidden;
-    border-radius: 5px;
+    border-radius: 30px;
     box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.5);
     margin-block: 1rem;
+    padding-inline: 10px;
 
-    .card_header {
+    .post_header {
         grid-row: 1;
-        height: 100%;
-        height: 50px;
+        height: 60px;
 
-        .card_header_content {
+        .post_header_content {
             display: flex;
             align-items: center;
             height: 100%;
 
-            .card_header_image {
+            .post_header_image {
                 padding: 10px;
                 height: 40px;
                 width: 40px;
                 border-radius: 50%;
             }
 
-            .card_header_name {
+            .post_header_name {
                 font-weight: 700;
             }
         }
 
     }
 
-    .card_body {
+    .post_body {
         grid-row: 2;
-        // max-height: 500px;
-        // border-bottom: 2px solid rgb(190, 190, 190);
-        border-bottom: 1px solid #888;
+        // border-bottom: 1px solid #666;
+        width: 100%;
+        margin: auto;
+        position: relative;
 
         &_image {
+            display: block;
+            margin: auto;
+            margin-block: .3rem calc(.3rem + 10px);
             width: 100%;
-            height: 400px;
+            height: 311px;
             object-fit: cover;
+            border-radius: 20px;
+            position: relative;
+            z-index: 2;
+            transition: transform .1s;
+
+            &:hover {
+                cursor: pointer;
+                transition: transform .1s;
+                transform: scale(1.005);
+            }
         }
 
+        &_shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 311px;
+            filter: blur(8px) saturate(2) opacity(.5);
+        }
+
+
         &_title {
-            padding: 0 10px 0px 10px;
+            padding: 10px;
             margin-bottom: 10px;
-            min-height: 2rem;
+            min-height: 1rem;
             box-sizing: border-box;
 
             div {
@@ -66,42 +90,55 @@
             }
         }
 
+        .post_body_buttons_container {
+            display: flex;
+
+            button {
+                background-color: transparent;
+                border: none;
+                height: 100%;
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                img {
+                    height: 100%;
+                }
+            }
+        }
+
         &_buttons {
             display: flex;
             align-items: center;
-        }
+            background-color: rgb(234, 228, 241);
+            padding: .5rem;
+            margin-right: 1rem;
+            border-radius: 10px;
+            width: fit-content;
+            height: 1.5rem;
 
-        &_like {
-            background-color: transparent;
-            border: none;
-
-            &:hover {
-                cursor: pointer;
-            }
-
-            img {
-                height: 100%;
+            div {
+                font-size: 1.2rem;
             }
         }
     }
 
-    .card_footer {
-
-        // grid-row: 3;
-        .card_comment_list {
+    .post_footer {
+        .post_comment_list {
             box-sizing: border-box;
             padding-inline: 10px;
             margin: 0;
             list-style: none;
             overflow: auto;
-            max-height: 200px;
+            max-height: 100px;
 
             &::-webkit-scrollbar {
                 width: 10px;
             }
 
             &::-webkit-scrollbar-track {
-                background: #f1f1f1;
+                background: #e7e7e7;
             }
 
             &::-webkit-scrollbar-thumb {
@@ -112,8 +149,8 @@
                 background: #666;
             }
 
-            .card_comment {
-                padding-block: .5rem;
+            .post_comment {
+                padding-bottom: .8rem;
                 border-bottom: 1px solid rgb(228, 228, 228);
 
                 div {
@@ -121,44 +158,53 @@
                 }
 
                 &:last-of-type {
-                    margin-bottom: 0;
+                    border-bottom: none;
+                    padding-bottom: 0;
                 }
 
-                .card_comment_name {
+                .post_comment_name {
                     font-weight: 700;
                 }
 
             }
         }
 
-        form {
+        .new_comment {
             height: 3rem;
             width: 100%;
+            margin-top: .8rem;
             overflow: hidden;
             display: flex;
             flex-wrap: nowrap;
 
             input {
-                background-color: #f7f7f7;
+                background-color: #e7e7e7;
                 box-sizing: border-box;
-                height: 100%;
+                height: 80%;
                 width: 80%;
-                padding-left: .5rem;
-                font-size: 1.2rem;
+                padding-left: .8rem;
+                font-size: 1rem;
                 border: none;
                 outline: none;
+                border-top-left-radius: 30px;
+                border-bottom-left-radius: 30px;
             }
 
             button {
+                background-color: #44a4ff;
+                color: white;
                 box-sizing: border-box;
                 font-size: 1.1rem;
                 border: none;
                 width: 20%;
-                height: 100%;
+                height: 80%;
+                border-top-right-radius: 30px;
+                border-bottom-right-radius: 30px;
 
                 &:hover {
                     cursor: pointer;
-                    background-color: rgb(204, 204, 204);
+                    background-color: #3d94e6;
+
                 }
             }
         }
@@ -166,15 +212,15 @@
     }
 }
 
-@media only screen and (max-width: 800px) {
-    .card {
-        width: 300px;
+// @media only screen and (max-width: 800px) {
+//     .post {
+//         width: 300px;
 
-        &_body {
-            .card_body_image {
-                width: 100%;
-                height: 300px;
-            }
-        }
-    }
-}
+//         &_body {
+//             .post_body_image {
+//                 width: 100%;
+//                 height: 300px;
+//             }
+//         }
+//     }
+// }

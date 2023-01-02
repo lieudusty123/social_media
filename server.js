@@ -13,7 +13,7 @@ const bcrypt = require("bcryptjs");
 //mongo setup
 const { MongoClient } = require("mongodb");
 var ObjectId = require("mongodb").ObjectId;
-const uri = fs.readFileSync("./keys/user.txt", "utf8");
+const uri = fs.readFileSync("./keys/admin.txt", "utf8");
 const client = new MongoClient(uri);
 
 //mongo specifics
@@ -51,13 +51,13 @@ app.post("/please", async function (req, res) {
   const result = await coll.insertOne(req.body);
 });
 
-app.get("/all", async function (req, res) {
-  const findResult = await coll.find({}, { projection: { _id: 0 } });
-  let response = [];
-  await findResult.forEach((output) => response.push(output));
+// app.get("/all", async function (req, res) {
+//   const findResult = await coll.find({}, { projection: { _id: 0 } });
+//   let response = [];
+//   await findResult.forEach((output) => response.push(output));
 
-  res.status(200).send({ response });
-});
+//   res.status(200).send({ response });
+// });
 
 app.post("/sign-up", async function (req, res) {
   const emailTaken = await coll
@@ -156,17 +156,26 @@ app.post("/clear-posts", async function (req, res) {
 });
 
 app.get("/all-posts", async function (req, res) {
-  let postArr = await postsColl
+  postsColl
     .find({})
     .toArray()
     .then(async function (posts) {
+      let storedUsers = [];
+      let storedImages = [];
       for (let index = 0; index < posts.length; index++) {
-        await coll
-          .find({ _id: posts[index].userName.id }, { image: 1 })
-          .toArray()
-          .then((imageRes) => {
-            posts[index].userName.image = imageRes[0].image;
-          });
+        if (storedUsers.indexOf(posts[index].userName.name) !== -1) {
+          posts[index].userName.image =
+            storedImages[storedUsers.indexOf(posts[index].userName.name)];
+        } else {
+          await coll
+            .find({ _id: posts[index].userName.id }, { image: 1 })
+            .toArray()
+            .then((imageRes) => {
+              storedUsers.push(posts[index].userName.name);
+              storedImages.push(imageRes[0].image);
+              posts[index].userName.image = imageRes[0].image;
+            });
+        }
       }
       res.status(200).send(posts);
     });
