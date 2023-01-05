@@ -10,19 +10,13 @@ const ShowAllPosts = () => {
       console.log(res.data);
       let arr = [];
       res.data.forEach((post) => {
-        console.log(post);
         arr.push(<Post data={post} key={uuidv4()} />);
       });
       setMappedItems(arr);
     });
   }, []);
 
-  return (
-    <Fragment>
-      {/* <button onClick={fetchAllPosts}>fetchAllPosts</button> */}
-      {mappedItem}
-    </Fragment>
-  );
+  return <Fragment>{mappedItem}</Fragment>;
 };
 
 export default ShowAllPosts;

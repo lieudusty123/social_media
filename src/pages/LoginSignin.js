@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import usersContext from "../context/usersContext";
+import Cookies from "js-cookie";
 const LoginSignin = () => {
   const data = useContext(usersContext);
   const [signUpName, setSignUpName] = useState("");
@@ -25,19 +26,31 @@ const LoginSignin = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  async function handleLoginSubmit(e) {
+  function handleLoginSubmit(e) {
     e.preventDefault();
-    const res = await axios.post("http://localhost:8000/login", {
-      email: loginEmail,
-      password: loginPassword,
-    });
-    console.log(res.data);
-    data.login(
-      res.data.email,
-      res.data.userId,
-      res.data.userName,
-      res.data.image
-    );
+    axios
+      .post("http://localhost:8000/login", {
+        email: loginEmail,
+        password: loginPassword,
+      })
+      .then((res) => {
+        console.log(res);
+        data.login(
+          res.data.email,
+          res.data.userId,
+          res.data.userName,
+          res.data.image
+        );
+        if (sessionStorage.getItem("cookieConsent") === "true") {
+          console.log(sessionStorage.getItem("cookieConsent"));
+          let str = JSON.stringify({
+            email: res.data.email,
+            userId: res.data.userId,
+            userName: res.data.userName,
+          });
+          Cookies.set("user", str);
+        }
+      });
   }
   return (
     <div>

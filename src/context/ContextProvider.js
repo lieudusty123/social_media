@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { useReducer } from "react";
 import usersContext from "./usersContext";
 const initialFluidData = {
@@ -16,6 +17,7 @@ function reducerFunc(state, action) {
         image: action.image,
       };
     case "LOGOUT":
+      Cookies.remove("user");
       return {
         email: undefined,
         userId: undefined,

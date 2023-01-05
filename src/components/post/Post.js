@@ -10,6 +10,7 @@ const Post = (props) => {
   const likeButton = useRef();
   const likeRef = useRef();
   const commentList = useRef();
+  const addCommentRef = useRef();
   const [commentContent, setCommentContent] = useState();
   const data = useContext(usersContext);
   const [mappedComments, setMappedComments] = useState([]);
@@ -37,7 +38,6 @@ const Post = (props) => {
       });
       setCommentContent("");
     } else {
-      alert("you need to login dummy");
     }
   }
   function axiosLike(str) {
@@ -161,7 +161,11 @@ const Post = (props) => {
             <div ref={likeRef}>{props.data.engagement.likes.length}</div>
           </div>
           <div className="post_body_buttons">
-            <button>
+            <button
+              onClick={() => {
+                addCommentRef.current.focus();
+              }}
+            >
               <img
                 src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iOTYuMDAwMDAwcHQiIGhlaWdodD0iOTYuMDAwMDAwcHQiIHZpZXdCb3g9IjAgMCA5Ni4wMDAwMDAgOTYuMDAwMDAwIgogcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCI+CjxtZXRhZGF0YT4KQ3JlYXRlZCBieSBwb3RyYWNlIDEuMTYsIHdyaXR0ZW4gYnkgUGV0ZXIgU2VsaW5nZXIgMjAwMS0yMDE5CjwvbWV0YWRhdGE+CjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAuMDAwMDAwLDk2LjAwMDAwMCkgc2NhbGUoMC4xMDAwMDAsLTAuMTAwMDAwKSIKZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSJub25lIj4KPHBhdGggZD0iTTMzNSA4NzMgYy0xMjIgLTQ0IC0yMjcgLTEzOCAtMjY0IC0yMzggLTI5IC03NiAtMjkgLTE5NCAwIC0yNzAgMzAKLTgyIDExMiAtMTY2IDIwNiAtMjEyIDY5IC0zNCA4NSAtMzggMTc0IC00MSA1NSAtMyAxMTkgMSAxNDQgNyA0MiAxMCA0OSA5CjEwNSAtMTkgMzMgLTE2IDcxIC0zMCA4NiAtMzAgbDI3IDAgLTYgODEgLTcgODEgMzUgNDEgYzc1IDg3IDk4IDI0NCA1NCAzNjIKLTMwIDgyIC0xMTIgMTY2IC0yMDcgMjEyIC03MiAzNiAtODEgMzggLTE4NiA0MSAtODYgMiAtMTIyIC0yIC0xNjEgLTE1eiIvPgo8L2c+Cjwvc3ZnPgo="
                 alt="comment"
@@ -203,6 +207,7 @@ const Post = (props) => {
             placeholder="Add a comment..."
             onChange={(e) => setCommentContent(e.target.value)}
             value={commentContent}
+            ref={addCommentRef}
           />
           <button type="submit">Post</button>
         </form>

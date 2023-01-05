@@ -181,6 +181,15 @@ app.get("/all-posts", async function (req, res) {
     });
 });
 
+app.post("/get-user-image", function (req, res) {
+  coll
+    .find({ _id: ObjectId(req.body.id) })
+    .toArray()
+    .then((arr) => {
+      res.status(200).send(arr[0].image);
+    });
+});
+
 app.post("/like-post", function (req, res) {
   postsColl
     .find({ _id: ObjectId(req.body.postId) })

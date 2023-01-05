@@ -2,18 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "./pages/feed_styling/feed.css";
-// import App from "./App";
 import ContextProvider from "./context/ContextProvider";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import FeedPage from "./pages/FeedPage";
 import LoginSignin from "./pages/LoginSignin";
+import Modal from "./components/Modal";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <ContextProvider>
       <LoginSignin />
+      <Modal />
       <FeedPage />
     </ContextProvider>
   </BrowserRouter>
