@@ -5,8 +5,6 @@ import "./new_post_styling/new_post.css";
 import newPostImage from "../../files/new_post.png";
 import placeHolderPostImage from "../../files/placeholder_new_post_image.jpg";
 import defaultImage from "../../files/placeholder_user_image.webp";
-
-import "./post_styling/post.css";
 const NewPost = () => {
   const [isShown, setIsShown] = useState(false);
   const [textData, setTextData] = useState("");
@@ -25,7 +23,10 @@ const NewPost = () => {
         .then(() => {
           imageRef.current.value = null;
           setTextData("");
-          setIsShown(!isShown);
+          setIsShown((oldState) => !oldState);
+        })
+        .finally(() => {
+          window.location.reload(false);
         });
     } else {
       console.log("missing data!");
@@ -45,7 +46,7 @@ const NewPost = () => {
       <div
         id="new_post_button"
         onClick={() => {
-          setIsShown(!isShown);
+          setIsShown((oldState) => !oldState);
         }}
       >
         <img src={newPostImage} alt="create post!" />
@@ -56,7 +57,7 @@ const NewPost = () => {
           className="new_post_modal"
           onClick={(e) => {
             if (e.target.className === "new_post_modal") {
-              setIsShown(!isShown);
+              setIsShown((oldState) => !oldState);
             }
           }}
         >
@@ -107,12 +108,18 @@ const NewPost = () => {
                 </div>
               </div>
               <div className="post_body_title">
-                <div className="post_date">today</div>
-                <div style={{ whiteSpace: "none", height: "auto" }}>
-                  <span>
+                <div className="post_date">now</div>
+                <div style={{ whiteSpace: "normal", height: "auto" }}>
+                  <div style={{ width: "100%" }}>
                     <b>{data.userName} </b>
-                    {textData}
-                  </span>
+                    <input
+                      type="text"
+                      placeholder="Description..."
+                      value={textData}
+                      style={{ width: "max-content" }}
+                      onChange={(e) => setTextData(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -120,25 +127,21 @@ const NewPost = () => {
               <ul className="post_comment_list"></ul>
               <div className="new_comment">
                 <input placeholder="Add a comment..." disabled />
-                <button type="submit" disabled>
-                  Post
-                </button>
+                <button disabled>Post</button>
               </div>
             </div>
           </div>
           <input
-            type="text"
-            placeholder="Description..."
-            value={textData}
-            onChange={(e) => setTextData(e.target.value)}
-          />
-          <input
+            style={{ display: "none" }}
             type="file"
             id="file-input"
             onChange={displayCurrentImage}
             ref={imageRef}
+            accept="image/png, image/jpeg"
           />
-          <button type="submit">Submit Post</button>
+          <button id="submitPost" type="submit">
+            Submit Post
+          </button>
         </form>
       )}
     </div>

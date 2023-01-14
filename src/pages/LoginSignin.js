@@ -1,31 +1,17 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import usersContext from "../context/usersContext";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import Modal from "../components/Modal";
 const LoginSignin = () => {
   const data = useContext(usersContext);
-  const [signUpName, setSignUpName] = useState("");
-  const [signUpEmail, setSignUpEmail] = useState("");
-  const [signUpPassword, setSignUpPassword] = useState("");
-  function handleSignUpSubmit(e) {
-    e.preventDefault();
-    axios
-      .post("http://localhost:8000/sign-up", {
-        name: signUpName,
-        email: signUpEmail,
-        password: signUpPassword,
-        image: "default",
-      })
-      .then(() => {
-        alert("User was created!");
-      });
-    setSignUpName("");
-    setSignUpEmail("");
-    setSignUpPassword("");
-  }
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    data.email && navigate("/");
+  }, [data, navigate]);
   function handleLoginSubmit(e) {
     e.preventDefault();
     axios
@@ -34,15 +20,13 @@ const LoginSignin = () => {
         password: loginPassword,
       })
       .then((res) => {
-        console.log(res);
         data.login(
           res.data.email,
           res.data.userId,
           res.data.userName,
           res.data.image
         );
-        if (sessionStorage.getItem("cookieConsent") === "true") {
-          console.log(sessionStorage.getItem("cookieConsent"));
+        if (localStorage.getItem("cookieConsent") === "true") {
           let str = JSON.stringify({
             email: res.data.email,
             userId: res.data.userId,
@@ -54,29 +38,7 @@ const LoginSignin = () => {
   }
   return (
     <div>
-      <div>Email</div>
-      <div></div>
-      <div>Sign up</div>
-      <form onSubmit={handleSignUpSubmit}>
-        <input
-          type="text"
-          placeholder="name"
-          value={signUpName}
-          onChange={(e) => setSignUpName(e.target.value)}
-        />
-        <input
-          type="email"
-          placeholder="email"
-          value={signUpEmail}
-          onChange={(e) => setSignUpEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          value={signUpPassword}
-          onChange={(e) => setSignUpPassword(e.target.value)}
-        />
-        <button type="submit">Submit!</button>
-      </form>
+      <Modal />
       {data.email === undefined && (
         <form onSubmit={handleLoginSubmit}>
           <div>Sign In</div>

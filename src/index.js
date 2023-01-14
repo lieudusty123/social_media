@@ -5,17 +5,12 @@ import "./pages/feed_styling/feed.css";
 import ContextProvider from "./context/ContextProvider";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import FeedPage from "./pages/FeedPage";
-import LoginSignin from "./pages/LoginSignin";
-import Modal from "./components/Modal";
-
+import App from "./App";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
     <ContextProvider>
-      <LoginSignin />
-      <Modal />
-      <FeedPage />
+      <App />
     </ContextProvider>
   </BrowserRouter>
 );

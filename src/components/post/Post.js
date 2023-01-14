@@ -5,21 +5,22 @@ import { v4 as uuidv4 } from "uuid";
 import defaultImage from "../../files/placeholder_user_image.webp";
 
 import "./post_styling/post.css";
+import { useNavigate } from "react-router-dom";
 let timeOut;
 const Post = (props) => {
   const likeButton = useRef();
   const likeRef = useRef();
   const commentList = useRef();
   const addCommentRef = useRef();
-  const [commentContent, setCommentContent] = useState();
+  const postDescRef = useRef();
+  const [commentContent, setCommentContent] = useState("");
   const data = useContext(usersContext);
   const [mappedComments, setMappedComments] = useState([]);
-  const [postedOn, setPostedOn] = useState("");
   const [isFullTitle, setIsFullTitle] = useState(false);
+  const navigate = useNavigate();
   function sendNewComment(e) {
     e.preventDefault();
     if (data.userName && commentContent.length > 0) {
-      console.log(commentList.current);
       let localArr = (
         <li className="post_comment" key={uuidv4()}>
           <div>
@@ -46,7 +47,6 @@ const Post = (props) => {
       postId: props.data._id,
       action: str,
     });
-    console.log("here");
   }
   function submitLike() {
     if (timeOut) {
@@ -70,26 +70,7 @@ const Post = (props) => {
       alert("You need to login first");
     }
   }
-  function passedTimeFormatted(date) {
-    const curr = new Date();
-    const difference = curr - date;
-    const formatted = difference / (1000 * 60 * 60 * 24);
-    const ronuded = Math.round(formatted);
-    if (ronuded / 365 >= 1) {
-      setPostedOn(`${(ronuded / 365).toFixed(1)}
-      ${ronuded > 1 ? " years ago" : " year ago"}`);
-    } else if (ronuded / 30 >= 1) {
-      setPostedOn(`${(ronuded / 30).toFixed(1)}
-      ${ronuded > 1 ? " months ago" : " month ago"}`);
-    } else if (ronuded >= 1) {
-      setPostedOn(`${ronuded}${ronuded > 1 ? " days ago" : " day ago"}`);
-    } else {
-      setPostedOn("today");
-    }
-  }
   useEffect(() => {
-    let newDate = new Date(props.data.date);
-    passedTimeFormatted(newDate);
     let localArr = props.data.engagement.comments.map((element) => (
       <li className="post_comment" key={uuidv4()}>
         <div>
@@ -124,6 +105,9 @@ const Post = (props) => {
                 ? defaultImage
                 : props.data.userName.image
             }
+            onClick={() => {
+              navigate(`/p/${props.data.userName.uuid}`);
+            }}
           />
           <div className="post_header_name">{props.data.userName.name}</div>
         </div>
@@ -175,20 +159,20 @@ const Post = (props) => {
           </div>
         </div>
         <div className="post_body_title">
-          <div className="post_date">{postedOn}</div>
+          <div className="post_date">{props.data.date}</div>
           <div
             onClick={(e) => {
               setIsFullTitle((oldState) => !oldState);
               if (isFullTitle) {
-                e.target.style.whiteSpace = "nowrap";
-                e.target.style.height = "1rem";
+                postDescRef.current.style.whiteSpace = "nowrap";
+                postDescRef.current.style.height = "1rem";
               } else {
-                e.target.style.whiteSpace = "normal";
-                e.target.style.height = "auto";
+                postDescRef.current.style.whiteSpace = "normal";
+                postDescRef.current.style.height = "auto";
               }
             }}
           >
-            <span>
+            <span ref={postDescRef}>
               <b>{props.data.userName.name} </b>
               {props.data.title}
             </span>

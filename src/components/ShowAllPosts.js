@@ -7,7 +7,6 @@ const ShowAllPosts = () => {
   let [mappedItem, setMappedItems] = useState([]);
   useEffect(() => {
     axios.get("http://localhost:8000/all-posts").then((res) => {
-      console.log(res.data);
       let arr = [];
       res.data.forEach((post) => {
         arr.push(<Post data={post} key={uuidv4()} />);

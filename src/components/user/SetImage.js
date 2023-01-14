@@ -1,12 +1,13 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import defaultUserImage from "../../files/placeholder_user_image.webp";
 import usersContext from "../../context/usersContext";
 import axios from "axios";
-
+let image;
 const SetImage = () => {
   const fileRef = useRef();
   const data = useContext(usersContext);
-  //   const [bool, setBool] = useState();
+  const [disableInput, setDisableInput] = useState(true);
+  const currentImageRef = useRef();
   function changeIcon(e) {
     e.preventDefault();
     let passedStr = "";
@@ -25,10 +26,15 @@ const SetImage = () => {
         });
     };
   }
-  console.log(fileRef.current);
-
+  function displayCurrentSelectedImage() {
+    currentImageRef.current.src = URL.createObjectURL(
+      fileRef.current["files"][0]
+    );
+    setDisableInput(false);
+  }
   return (
     <>
+      <img style={{ width: "100px", height: "100px" }} ref={currentImageRef} />
       <form
         onSubmit={changeIcon}
         style={{ background: "rgb(50,50,60)", padding: "1rem", margin: "1rem" }}
@@ -39,8 +45,12 @@ const SetImage = () => {
           src={data.image === "default" ? defaultUserImage : data.image}
           style={{ width: "50px", borderRadius: "50%" }}
         />
-        <input type="file" ref={fileRef} />
-        <button type="submit" disabled={fileRef.current}>
+        <input
+          type="file"
+          ref={fileRef}
+          onChange={displayCurrentSelectedImage}
+        />
+        <button type="submit" disabled={disableInput}>
           Change Image
         </button>
       </form>

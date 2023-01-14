@@ -4,15 +4,15 @@ import cookieImg from "../files/cookies.png";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 function Modal() {
-  const [isShown, setIsShown] = useState(true);
+  const [isShown, setIsShown] = useState(false);
   useEffect(() => {
-    if (sessionStorage.getItem("cookieConesnt") || Cookies.get("user")) {
-      console.log("in");
+    if (localStorage.getItem("cookieConesnt") || Cookies.get("cookieConsent")) {
       document.getElementById("cookies_modal").style.display = "none";
       document.querySelector("body").style.overflow = "auto";
       setIsShown(false);
     } else {
       document.querySelector("body").style.overflow = "hidden";
+      setIsShown(true);
     }
   }, []);
   function handleClick(e) {
@@ -21,10 +21,11 @@ function Modal() {
     document.querySelector("body").style.overflow = "auto";
     if (e.target.innerText === "Accept") {
       console.log("accepted");
-      sessionStorage.setItem("cookieConsent", "true");
+      localStorage.setItem("cookieConsent", "true");
+      Cookies.set("cookieConsent", "true");
     } else {
       console.log("declined");
-      sessionStorage.setItem("cookieConsent", "false");
+      localStorage.setItem("cookieConsent", "false");
     }
   }
   return createPortal(
