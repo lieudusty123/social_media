@@ -14,13 +14,20 @@ function App() {
   // gets data from cookies and updating the contextAPI + fetching user image
   useEffect(() => {
     let cookiesStr = Cookies.get("user");
-    if (cookiesStr && !data.email) {
+    if (
+      cookiesStr !== undefined &&
+      JSON.parse(cookiesStr).userId &&
+      !data.email
+    ) {
       let cookies = JSON.parse(cookiesStr);
       axios
         .post("http://localhost:8000/get-user-image", { id: cookies.userId })
         .then((res) => {
           console.log(res);
           data.login(cookies.email, cookies.userId, cookies.userName, res.data);
+        })
+        .catch((e) => {
+          alert(e.response.data);
         });
     }
   }, [data]);
@@ -28,11 +35,17 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<FeedPage />} />
+
       <Route path="/login" element={<LoginSignin />} />
       <Route path="/signup" element={<SignUp />} />
+
       <Route path="/p/:id" element={<UserProfile />} />
-      <Route path="/*" element={<UserNotFound />} />
       <Route path="/p/*" element={<UserNotFound />} />
+
+      <Route path="/post/:id" element={<UserNotFound />} />
+      <Route path="/post/*" element={<UserNotFound />} />
+
+      <Route path="/*" element={<UserNotFound />} />
     </Routes>
   );
 }

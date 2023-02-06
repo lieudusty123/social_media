@@ -29,7 +29,7 @@ const NewPost = () => {
           window.location.reload(false);
         });
     } else {
-      console.log("missing data!");
+      alert("missing data!");
     }
   }
 
@@ -121,13 +121,6 @@ const NewPost = () => {
                     />
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="post_footer">
-              <ul className="post_comment_list"></ul>
-              <div className="new_comment">
-                <input placeholder="Add a comment..." disabled />
-                <button disabled>Post</button>
               </div>
             </div>
           </div>

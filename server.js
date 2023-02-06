@@ -63,6 +63,7 @@ app.post("/sign-up", async function (req, res) {
             password: hash,
           },
           followers: [],
+          following: [],
           posts: [],
         });
         res.status(200).send("Your user was now created");
@@ -82,6 +83,7 @@ app.post("/login", async function (req, res) {
     .toArray();
   if (mongoCall.length !== 1) {
     returnVal = "Nope, email not found";
+    res.status(404).send(returnVal);
   } else {
     let compare = await bcrypt.compare(
       password,
@@ -95,11 +97,12 @@ app.post("/login", async function (req, res) {
         userName: mongoCall[0].name,
         image: mongoCall[0].image,
       };
+      res.status(200).send(returnVal);
     } else {
       returnVal = "Nope, password incorrect";
+      res.status(404).send(returnVal);
     }
   }
-  res.status(200).send(returnVal);
 });
 
 app.post("/new-post", async function (req, res) {
@@ -138,7 +141,6 @@ app.post("/new-post", async function (req, res) {
 app.post("/clear-all-data", function () {
   coll.deleteMany({});
   postsColl.deleteMany({});
-  res.status(200).send("deleted!");
 });
 
 app.post("/clear-posts", async function (req, res) {
@@ -219,6 +221,47 @@ app.post("/get-user-image", function (req, res) {
         res.status(200).send(arr[0].image);
       } else {
         res.status(404).send("user not found");
+      }
+    });
+});
+
+app.post("/follow", function (req, res) {
+  coll
+    .find({ uuid: req.body.targetUuid })
+    .toArray()
+    .then((targetUser) => {
+      if (targetUser[0].followers.indexOf(req.body.currentUuid) !== -1) {
+        coll
+          .updateOne(
+            { uuid: req.body.targetUuid },
+            { $pull: { followers: req.body.currentUuid } }
+          )
+          .then(() => {
+            coll
+              .updateOne(
+                { uuid: req.body.currentUuid },
+                { $pull: { following: req.body.targetUuid } }
+              )
+              .then(() => {
+                res.status(200).send("Remove Follower");
+              });
+          });
+      } else {
+        coll
+          .updateOne(
+            { uuid: req.body.targetUuid },
+            { $push: { followers: req.body.currentUuid } }
+          )
+          .then(() => {
+            coll
+              .updateOne(
+                { uuid: req.body.currentUuid },
+                { $push: { following: req.body.targetUuid } }
+              )
+              .then(() => {
+                res.status(200).send("Add Follower");
+              });
+          });
       }
     });
 });

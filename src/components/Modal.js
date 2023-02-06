@@ -12,6 +12,7 @@ function Modal() {
       setIsShown(false);
     } else {
       document.querySelector("body").style.overflow = "hidden";
+      document.getElementById("cookies_modal").style.display = "flex";
       setIsShown(true);
     }
   }, []);

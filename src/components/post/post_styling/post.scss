@@ -23,10 +23,12 @@
         height: 40px;
         width: 40px;
         border-radius: 50%;
+        cursor: pointer;
       }
 
       .post_header_name {
         font-weight: 700;
+        cursor: pointer;
       }
     }
   }
@@ -66,7 +68,6 @@
 
     &_title {
       padding: 10px;
-      //   margin-bottom: 10px;
       min-height: 1rem;
       box-sizing: border-box;
 
@@ -74,9 +75,10 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-
-        &:nth-of-type(2):hover {
-          cursor: pointer;
+        span {
+          b {
+            cursor: pointer;
+          }
         }
       }
 

@@ -4,11 +4,11 @@
   background-color: rgba(0, 0, 0, 0.637);
   position: absolute;
   bottom: 0;
-  display: flex;
+  // display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10000;
-  //   display: none;
+  display: none;
 }
 
 #cookie_consent_container {
@@ -42,14 +42,14 @@
     }
 
     &#accept {
-      background-color: black;
+      background-color: rgb(31, 31, 31);
       color: white;
       transition: background-color 0.3s, color 0.3s;
 
       &:hover {
         transition: background-color 0.3s, color 0.3s;
-        background-color: white;
-        color: black;
+        background-color: black;
+        color: white;
         border: 2px solid black;
       }
     }

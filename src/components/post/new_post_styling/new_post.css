@@ -54,8 +54,24 @@
           align-items: center;
 }
 
+#new_post_container > .new_post_modal:hover {
+  cursor: pointer;
+}
+
+#new_post_container > .new_post_modal .post {
+  cursor: default;
+}
+
+#new_post_container > .new_post_modal #create_post_title {
+  cursor: default;
+}
+
 #new_post_container > .new_post_modal .post_body_buttons button:hover {
   cursor: default;
+}
+
+#new_post_container > .new_post_modal .post_body_title {
+  padding-bottom: 2rem;
 }
 
 #new_post_container > .new_post_modal .post_body_title div:hover {

@@ -4,14 +4,17 @@ import usersContext from "../context/usersContext";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
+import "./UserProfileComponents/style.module.css";
 const LoginSignin = () => {
   const data = useContext(usersContext);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const navigate = useNavigate();
+
   useEffect(() => {
     data.email && navigate("/");
   }, [data, navigate]);
+
   function handleLoginSubmit(e) {
     e.preventDefault();
     axios
@@ -34,6 +37,9 @@ const LoginSignin = () => {
           });
           Cookies.set("user", str);
         }
+      })
+      .catch((e) => {
+        alert(e.response.data);
       });
   }
   return (

@@ -40,14 +40,27 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    &:hover {
+      cursor: pointer;
+    }
+    .post {
+      cursor: default;
+    }
+
+    #create_post_title {
+      cursor: default;
+    }
 
     .post_body_buttons {
       button:hover {
         cursor: default;
       }
     }
-    .post_body_title div:hover {
-      cursor: default;
+    .post_body_title {
+      padding-bottom: 2rem;
+      div:hover {
+        cursor: default;
+      }
     }
     #create_post_title {
       color: white;

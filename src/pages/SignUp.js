@@ -27,7 +27,8 @@ function SignUp() {
         setSignUpEmail("");
         setSignUpPassword("");
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e);
         alert("user id is taken!");
       });
   }

@@ -24,7 +24,14 @@ const Post = (props) => {
       let localArr = (
         <li className="post_comment" key={uuidv4()}>
           <div>
-            <div className="post_comment_name">{data.userName}</div>
+            <div
+              className="post_comment_name"
+              onClick={() => {
+                navigate(`/p/${props.data.userName.userId}`);
+              }}
+            >
+              {data.userName}
+            </div>
             <div>{commentContent}</div>
           </div>
         </li>
@@ -74,12 +81,23 @@ const Post = (props) => {
     let localArr = props.data.engagement.comments.map((element) => (
       <li className="post_comment" key={uuidv4()}>
         <div>
-          <div className="post_comment_name">{element.userName}</div>
+          <div
+            className="post_comment_name"
+            onClick={() => {
+              navigate(`/p/${element.userId}`);
+            }}
+          >
+            {element.userName}
+          </div>
           <div>{element.content}</div>
         </div>
       </li>
     ));
     setMappedComments(() => localArr);
+    postDescRef.current.getBoundingClientRect().width >
+    postDescRef.current.parentElement.getBoundingClientRect().width
+      ? (postDescRef.current.style.cursor = "pointer")
+      : (postDescRef.current.style.cursor = "auto");
   }, [props.data]);
   useEffect(() => {
     if (data.userId === undefined) {
@@ -109,7 +127,14 @@ const Post = (props) => {
               navigate(`/p/${props.data.userName.uuid}`);
             }}
           />
-          <div className="post_header_name">{props.data.userName.name}</div>
+          <div
+            className="post_header_name"
+            onClick={() => {
+              navigate(`/p/${props.data.userName.uuid}`);
+            }}
+          >
+            {props.data.userName.name}
+          </div>
         </div>
       </div>
       <div className="post_body">
@@ -173,7 +198,13 @@ const Post = (props) => {
             }}
           >
             <span ref={postDescRef}>
-              <b>{props.data.userName.name} </b>
+              <b
+                onClick={() => {
+                  navigate(`/p/${props.data.userName.uuid}`);
+                }}
+              >
+                {props.data.userName.name}{" "}
+              </b>
               {props.data.title}
             </span>
           </div>
