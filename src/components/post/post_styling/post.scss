@@ -69,7 +69,6 @@
     &_title {
       padding: 10px;
       min-height: 1rem;
-      box-sizing: border-box;
 
       div {
         text-overflow: ellipsis;
@@ -124,7 +123,6 @@
 
   .post_footer {
     .post_comment_list {
-      box-sizing: border-box;
       padding-inline: 10px;
       margin: 0;
       list-style: none;
@@ -176,7 +174,7 @@
 
       input {
         background-color: #e7e7e7;
-        box-sizing: border-box;
+
         height: 80%;
         width: 80%;
         padding-left: 0.8rem;
@@ -190,7 +188,7 @@
       button {
         background-color: #44a4ff;
         color: white;
-        box-sizing: border-box;
+
         font-size: 1.1rem;
         border: none;
         width: 20%;

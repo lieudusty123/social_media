@@ -1,4 +1,4 @@
-#root {
+#feed-page-container {
   min-height: 100vh;
   background: -webkit-gradient(linear, left bottom, left top, color-stop(30%, #2e3446), to(#212329));
   background: linear-gradient(0deg, #2e3446 30%, #212329 100%);

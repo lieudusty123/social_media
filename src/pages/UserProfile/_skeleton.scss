@@ -1,0 +1,99 @@
+@mixin bg_ani() {
+  background-color: gainsboro;
+  animation: endless infinite ease-in-out 1.5s;
+  @keyframes endless {
+    0% {
+      background-color: rgb(215, 215, 215);
+    }
+    50% {
+      background-color: rgb(230, 230, 230);
+    }
+    100% {
+      background-color: rgb(215, 215, 215);
+    }
+  }
+}
+#skeleton {
+  &_wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  &_header {
+    max-width: 90vw;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: row;
+  }
+  &_profile {
+    &_image {
+      aspect-ratio: 1/1;
+      width: 10rem;
+
+      border-radius: 50%;
+      @include bg_ani();
+      display: inline-block;
+    }
+    &_info_container {
+      max-width: 60vw;
+      display: flex;
+      flex-direction: column;
+      margin-left: 3rem;
+      margin-top: 0.5rem;
+      #skeleton_profile {
+        &_id {
+          width: 10rem;
+          height: 2rem;
+          @include bg_ani();
+          display: inline-block;
+        }
+        &_stats {
+          display: flex;
+          div {
+            margin: 2rem 1rem 0 0;
+            height: 1.5rem;
+            width: 8rem;
+            @include bg_ani();
+          }
+        }
+        &_bio {
+          display: flex;
+          div {
+            margin-top: 2rem;
+            display: inline-block;
+            @include bg_ani();
+            &:first-of-type {
+              width: 5rem;
+              height: 1.5rem;
+            }
+            &:last-of-type {
+              margin-left: 0.5rem;
+              width: 20rem;
+              height: 1.5rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  &_posts {
+    &_wrapper {
+      margin: auto;
+      max-width: 90vw;
+      height: auto;
+      display: flex;
+      justify-content: center;
+    }
+    &_container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 90%;
+      div {
+        aspect-ratio: 1.5 / 1;
+        @include bg_ani();
+        width: 300px;
+        margin: 15px;
+      }
+    }
+  }
+}

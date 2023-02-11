@@ -14,7 +14,7 @@ const FeedPage = () => {
     !data.email && !Cookies.get("user") && navigate("/login");
   }, [data, navigate]);
   return (
-    <>
+    <div id="feed-page-container">
       <button
         onClick={() => {
           axios.post("http://localhost:8000/clear-all-data");
@@ -26,7 +26,7 @@ const FeedPage = () => {
       {data.image && <SetImage />}
       {data.email && <NewPost />}
       <ShowAllPosts />
-    </>
+    </div>
   );
 };
 export default FeedPage;
