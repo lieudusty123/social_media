@@ -35,43 +35,50 @@ app.use(cors());
 async function connect() {
   try {
     await client.connect();
-    console.log("connected");
+    console.log("- Connected to Database");
   } catch (error) {
     console.log(error);
   }
 }
 
-app.listen(8000, () => {
-  console.log("Server started on port 8000");
-  connect();
-});
-
-app.post("/sign-up", async function (req, res) {
-  const emailTaken = await coll
+app.post("/sign-up", function (req, res) {
+  coll
     .find({ "private_details.email": req.body.email })
-    .toArray();
-
-  if (emailTaken.length === 0) {
-    bcrypt.genSalt(12).then((salt) => {
-      bcrypt.hash(req.body.password, salt).then((hash) => {
-        coll.insertOne({
-          name: req.body.name,
-          uuid: req.body.id,
-          image: req.body.image,
-          private_details: {
-            email: req.body.email,
-            password: hash,
-          },
-          followers: [],
-          following: [],
-          posts: [],
-        });
-        res.status(200).send("Your user was now created");
-      });
+    .toArray()
+    .then((emailTaken) => {
+      if (emailTaken.length === 0) {
+        coll
+          .find({ uuid: req.body.id })
+          .toArray()
+          .then((data) => {
+            if (data.length === 0) {
+              let returnObj = {};
+              bcrypt.genSalt(12).then((salt) => {
+                bcrypt.hash(req.body.password, salt).then((hash) => {
+                  returnObj = {
+                    name: req.body.name,
+                    uuid: req.body.id,
+                    image: req.body.image,
+                    private_details: {
+                      email: req.body.email,
+                      password: hash,
+                    },
+                    followers: [],
+                    following: [],
+                    posts: [],
+                  };
+                  coll.insertOne(returnObj);
+                  res.status(200).send(returnObj);
+                });
+              });
+            } else {
+              res.status(404).send("This ID is already in use!");
+            }
+          });
+      } else {
+        res.status(409).send("This email is already in use!");
+      }
     });
-  } else {
-    res.status(409).send("User already exists");
-  }
 });
 
 app.post("/login", async function (req, res) {
@@ -363,15 +370,7 @@ app.post("/user-profile", function (req, res) {
   }
 });
 
-app.get("/check-user-id", function (req, res) {
-  coll
-    .find({ uuid: req.body.id })
-    .toArray()
-    .then((data) => {
-      if (data.length !== 0) {
-        res.status(404).send("user exists!");
-      } else {
-        res.status(200).send();
-      }
-    });
+app.listen(8000, () => {
+  console.log("- Server up! Port 8000");
+  connect();
 });

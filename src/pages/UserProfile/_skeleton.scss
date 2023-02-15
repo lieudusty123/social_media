@@ -1,6 +1,6 @@
 @mixin bg_ani() {
   background-color: gainsboro;
-  animation: endless infinite ease-in-out 1.5s;
+  animation: endless infinite ease-in-out 1s;
   @keyframes endless {
     0% {
       background-color: rgb(215, 215, 215);

@@ -1,4 +1,4 @@
-#feed-page-container {
+body {
   min-height: 100vh;
   background: linear-gradient(
     0deg,
@@ -9,4 +9,5 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: white;
 }

@@ -36,8 +36,8 @@
           align-items: center;
   padding: 2rem;
   color: black;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.281);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.281);
+  -webkit-box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.349);
+          box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.349);
   border-radius: 30px;
   text-align: center;
 }
@@ -59,8 +59,8 @@
 }
 
 #cookie_consent_container button#accept {
-  background-color: #1f1f1f;
-  color: white;
+  background-color: #daa24f;
+  color: black;
   -webkit-transition: background-color 0.3s, color 0.3s;
   transition: background-color 0.3s, color 0.3s;
 }

@@ -7,11 +7,22 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import "./feed_styling/feed.css";
 const FeedPage = () => {
   const data = useContext(usersContext);
   const navigate = useNavigate();
   useEffect(() => {
     !data.email && !Cookies.get("user") && navigate("/login");
+    // let styles = {
+    //   minHeight: "100vh",
+    //   background:
+    //     "linear-gradient(0deg,rgba(46, 52, 70, 1) 30%,rgba(33, 35, 41, 1) 100%)",
+    //   backgroundAttachment: "fixed",
+    //   display: "flex",
+    //   flexDirection: "column",
+    //   alignItems: "center",
+    // };
+    // Object.assign(document.querySelector("body").style, styles);
   }, [data, navigate]);
   return (
     <div id="feed-page-container">

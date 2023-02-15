@@ -2,12 +2,11 @@ import axios from "axios";
 import usersContext from "./context/usersContext";
 import FeedPage from "./pages/FeedPage";
 import UserProfile from "./pages/UserProfile";
-import LoginSignin from "./pages/LoginSignin";
-import SignUp from "./pages/SignUp";
 import { useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Route, Routes } from "react-router-dom";
 import UserNotFound from "./pages/UserNotFound";
+import Form from "./pages/Form";
 
 function App() {
   const data = useContext(usersContext);
@@ -36,8 +35,8 @@ function App() {
     <Routes>
       <Route path="/" element={<FeedPage />} />
 
-      <Route path="/login" element={<LoginSignin />} />
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Form />} />
+      <Route path="/signup" element={<Form />} />
 
       <Route path="/p/:id" element={<UserProfile />} />
       <Route path="/p/*" element={<UserNotFound />} />

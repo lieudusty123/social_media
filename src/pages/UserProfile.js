@@ -2,11 +2,11 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import usersContext from "../context/usersContext";
-import UserNotFound from "./UserNotFound";
 import defaultImage from "../files/placeholder_user_image.webp";
 import BackButton from "../components/reuseable/BackButton/BackButton";
-import "./UserProfile/UserProfile.css";
 import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
+import "./UserProfile/UserProfile.css";
+import "./feed_styling/feed.css";
 function UserProfile() {
   const params = useParams();
   const navigate = useNavigate();
