@@ -7,6 +7,7 @@ import BackButton from "../components/reuseable/BackButton/BackButton";
 import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
 import "./UserProfile/UserProfile.css";
 import "./feed_styling/feed.css";
+import Nav from "./Nav";
 function UserProfile() {
   const params = useParams();
   const navigate = useNavigate();
@@ -31,10 +32,13 @@ function UserProfile() {
           } else if (
             res.data.userData[0].followers.indexOf(data.userId) === -1
           ) {
-            setFollowButtonStyle({ backgroundColor: "cyan" });
+            setFollowButtonStyle({
+              backgroundColor: "#8AC3F2",
+              color: "black",
+            });
             return "follow";
           } else {
-            setFollowButtonStyle({ backgroundColor: "white" });
+            setFollowButtonStyle({ backgroundColor: "white", color: "black" });
             return "following";
           }
         });
@@ -57,10 +61,16 @@ function UserProfile() {
         setFollowButton((prev) => {
           switch (prev) {
             case "follow":
-              setFollowButtonStyle({ backgroundColor: "white" });
+              setFollowButtonStyle({
+                backgroundColor: "white",
+                color: "black",
+              });
               return "following";
             case "following":
-              setFollowButtonStyle({ backgroundColor: "cyan" });
+              setFollowButtonStyle({
+                backgroundColor: "#8AC3F2",
+                color: "black",
+              });
               return "follow";
             default:
               return false;
@@ -72,31 +82,18 @@ function UserProfile() {
   return (
     <>
       {validUser && !isLoading && (
-        <div style={{ fontSize: "10px" }}>
-          <nav>
-            <BackButton
-              handleClick={() => {
-                navigate("/");
-              }}
-              customStyle={{
-                margin: "0",
-              }}
-            >
-              Home
-            </BackButton>
-          </nav>
+        <div className="user-profile-container" style={{ fontSize: "10px" }}>
+          <Nav />
           <header>
             <div className="container">
               <div className="profile">
                 <div className="profile-image">
                   <img
-                    // src="https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces"
                     src={
                       userData.image === "default"
                         ? defaultImage
                         : userData.image
                     }
-                    // style={{ width: "152px", height: "152px" }}
                     alt=""
                   />
                 </div>
@@ -113,18 +110,16 @@ function UserProfile() {
                     <button
                       className="profile-page btn profile-edit-btn"
                       onClick={follow}
-                      style={{ ...followButtonStyle }}
+                      style={{
+                        ...followButtonStyle,
+                        color: "black",
+                        border: "none",
+                        padding: ".2rem 1.5rem",
+                      }}
                     >
                       {followButton}
                     </button>
                   )}
-
-                  {/* <button
-                    className="btn profile-settings-btn"
-                    aria-label="profile settings"
-                  >
-                    <i className="fas fa-cog" aria-hidden="true"></i>
-                  </button> */}
                 </div>
 
                 <div className="profile-stats">
@@ -164,7 +159,6 @@ function UserProfile() {
           <main>
             <div className="container">
               <AllPostsThumbnails user={postData} />
-
               {isLoading && <div className="loader"></div>}
             </div>
           </main>

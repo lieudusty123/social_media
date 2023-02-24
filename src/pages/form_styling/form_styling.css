@@ -1,6 +1,133 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,800");
+@media screen and (max-width: 600px) {
+  #FormComponent .container {
+    min-height: 350px;
+    width: 340px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  #FormComponent .overlay-container {
+    display: none;
+  }
+  #FormComponent .sign-in-container {
+    display: block;
+    left: 0;
+  }
+  #FormComponent .sign-up-container {
+    display: none;
+    left: 0;
+  }
+  #FormComponent .container.right-panel-active .sign-in-container {
+    display: none;
+    width: 100%;
+    left: 0;
+    z-index: 2;
+  }
+  #FormComponent .container.right-panel-active .sign-up-container {
+    display: block;
+    left: 0;
+    width: 100%;
+    opacity: 1;
+    z-index: 1;
+  }
+  #FormComponent .signUp-mobile {
+    margin-top: 0.5rem;
+    display: block;
+    color: #ff4b2b;
+    cursor: pointer;
+  }
+  #FormComponent .signIn-mobile {
+    margin-top: 0.5rem;
+    display: none;
+    color: #ff4b2b;
+    cursor: pointer;
+  }
+  #FormComponent .container.right-panel-active .signUp-mobile {
+    display: none;
+  }
+  #FormComponent .container.right-panel-active .signIn-mobile {
+    display: block;
+  }
+  #FormComponent form {
+    padding: 0 20px;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  #FormComponent {
+    width: calc(100vw - 7rem);
+  }
+  #FormComponent .container {
+    width: 768px;
+    min-height: 480px;
+  }
+  #FormComponent .overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-transition: -webkit-transform 0.6s ease-in-out;
+    transition: -webkit-transform 0.6s ease-in-out;
+    transition: transform 0.6s ease-in-out;
+    transition: transform 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
+    z-index: 100;
+  }
+  #FormComponent .container.right-panel-active .overlay-container {
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+  #FormComponent .sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+  }
+  #FormComponent .container.right-panel-active .sign-in-container {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+  }
+  #FormComponent .sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+  }
+  #FormComponent .container.right-panel-active .sign-up-container {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    -webkit-animation: show 0.6s;
+            animation: show 0.6s;
+  }
+  #FormComponent .signUp-mobile {
+    display: none;
+  }
+  #FormComponent .signIn-mobile {
+    display: none;
+  }
+  #FormComponent .form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    -webkit-transition: all 0.6s ease-in-out;
+    transition: all 0.6s ease-in-out;
+  }
+  #FormComponent form {
+    padding: 0 50px;
+  }
+}
+
 #FormComponent {
-  width: 100vw;
   height: 100vh;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -36,9 +163,10 @@
   margin: 20px 0 30px;
 }
 
-#FormComponent span {
+#FormComponent .wrong-input {
   color: #e72121;
   font-size: 16px;
+  height: 15px;
   text-decoration: none;
   margin: 5px 0 15px 0;
 }
@@ -96,7 +224,6 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding: 0 50px;
   height: 100%;
   text-align: center;
 }
@@ -130,44 +257,7 @@
           box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   position: relative;
   overflow: hidden;
-  width: 768px;
   max-width: 100%;
-  min-height: 480px;
-}
-
-#FormComponent .form-container {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  -webkit-transition: all 0.6s ease-in-out;
-  transition: all 0.6s ease-in-out;
-}
-
-#FormComponent .sign-in-container {
-  left: 0;
-  width: 50%;
-  z-index: 2;
-}
-
-#FormComponent .container.right-panel-active .sign-in-container {
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
-}
-
-#FormComponent .sign-up-container {
-  left: 0;
-  width: 50%;
-  opacity: 0;
-  z-index: 1;
-}
-
-#FormComponent .container.right-panel-active .sign-up-container {
-  -webkit-transform: translateX(100%);
-          transform: translateX(100%);
-  opacity: 1;
-  z-index: 5;
-  -webkit-animation: show 0.6s;
-          animation: show 0.6s;
 }
 
 @-webkit-keyframes show {
@@ -194,25 +284,6 @@
     opacity: 1;
     z-index: 5;
   }
-}
-
-#FormComponent .overlay-container {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 50%;
-  height: 100%;
-  overflow: hidden;
-  -webkit-transition: -webkit-transform 0.6s ease-in-out;
-  transition: -webkit-transform 0.6s ease-in-out;
-  transition: transform 0.6s ease-in-out;
-  transition: transform 0.6s ease-in-out, -webkit-transform 0.6s ease-in-out;
-  z-index: 100;
-}
-
-#FormComponent .container.right-panel-active .overlay-container {
-  -webkit-transform: translateX(-100%);
-          transform: translateX(-100%);
 }
 
 #FormComponent .overlay {

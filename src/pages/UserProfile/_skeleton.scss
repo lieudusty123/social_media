@@ -17,12 +17,14 @@
   &_wrapper {
     display: flex;
     flex-direction: column;
+    border-radius: 5px;
   }
   &_header {
     max-width: 90vw;
     margin: 2rem auto;
     display: flex;
     flex-direction: row;
+    border-radius: 5px;
   }
   &_profile {
     &_image {
@@ -45,6 +47,7 @@
           height: 2rem;
           @include bg_ani();
           display: inline-block;
+          border-radius: 5px;
         }
         &_stats {
           display: flex;
@@ -52,6 +55,7 @@
             margin: 2rem 1rem 0 0;
             height: 1.5rem;
             width: 8rem;
+            border-radius: 5px;
             @include bg_ani();
           }
         }
@@ -60,6 +64,7 @@
           div {
             margin-top: 2rem;
             display: inline-block;
+            border-radius: 5px;
             @include bg_ani();
             &:first-of-type {
               width: 5rem;
@@ -90,6 +95,7 @@
       width: 90%;
       div {
         aspect-ratio: 1.5 / 1;
+        border-radius: 5px;
         @include bg_ani();
         width: 300px;
         margin: 15px;

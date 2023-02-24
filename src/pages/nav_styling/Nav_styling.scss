@@ -1,0 +1,97 @@
+@mixin flexCenter($direction, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+#main_nav {
+  width: 100vw;
+  max-width: 100%;
+  height: 70px;
+  background-color: #eeeeee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 10px;
+  border-bottom: 1px solid #dfdfdf;
+  box-sizing: border-box;
+  form {
+    position: relative;
+    input {
+      padding-inline: 10px;
+      width: 15rem;
+      height: 1.5rem;
+      background-color: #ffffff;
+      border: 1px solid lightgray;
+      outline: none;
+    }
+    ul {
+      list-style: none;
+      position: absolute;
+      padding: 0;
+      margin: 0;
+      z-index: 10;
+      top: 100%;
+      overflow: hidden;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      li {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        border-bottom: 2px solid rgb(212, 212, 212);
+        padding-left: 0.5rem;
+        background-color: white;
+        color: black;
+        width: 100%;
+        height: 2.8rem;
+        transition: 0.15s background-color;
+        &:last-of-type {
+          border-bottom: none;
+        }
+        &:hover {
+          cursor: pointer;
+          transition: 0.15s background-color;
+          background-color: rgb(212, 212, 212);
+        }
+
+        img {
+          width: calc(2.8rem - 5%);
+          border-radius: 50%;
+          margin-right: 0.5rem;
+        }
+
+        .user-uuid {
+          color: gray;
+          font-size: 0.7rem;
+        }
+      }
+    }
+  }
+  .user_option_ul {
+    display: none;
+    &.shown {
+      display: block;
+      border-radius: 5px;
+      margin-top: 1rem;
+    }
+    li {
+      padding-inline: 10px;
+    }
+  }
+  .user_image_container {
+    width: 100px;
+    .user_image {
+      cursor: pointer;
+      width: 50px;
+      border-radius: 50%;
+      box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.589);
+      transition: 0.2s box-shadow;
+      &:hover {
+        transition: 0.2s box-shadow;
+        box-shadow: 0px 0px 7px black;
+      }
+    }
+  }
+}

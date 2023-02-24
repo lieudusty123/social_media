@@ -45,7 +45,6 @@ const Post = (props) => {
         content: commentContent,
       });
       setCommentContent("");
-    } else {
     }
   }
   function axiosLike(str) {
@@ -98,7 +97,8 @@ const Post = (props) => {
     postDescRef.current.parentElement.getBoundingClientRect().width
       ? (postDescRef.current.style.cursor = "pointer")
       : (postDescRef.current.style.cursor = "auto");
-  }, [props.data]);
+  }, [props.data, navigate]);
+
   useEffect(() => {
     if (data.userId === undefined) {
       likeButton.current.className =
@@ -111,6 +111,7 @@ const Post = (props) => {
           : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMiAyMS41OTNjLTUuNjMtNS41MzktMTEtMTAuMjk3LTExLTE0LjQwMiAwLTMuNzkxIDMuMDY4LTUuMTkxIDUuMjgxLTUuMTkxIDEuMzEyIDAgNC4xNTEuNTAxIDUuNzE5IDQuNDU3IDEuNTktMy45NjggNC40NjQtNC40NDcgNS43MjYtNC40NDcgMi41NCAwIDUuMjc0IDEuNjIxIDUuMjc0IDUuMTgxIDAgNC4wNjktNS4xMzYgOC42MjUtMTEgMTQuNDAybTUuNzI2LTIwLjU4M2MtMi4yMDMgMC00LjQ0NiAxLjA0Mi01LjcyNiAzLjIzOC0xLjI4NS0yLjIwNi0zLjUyMi0zLjI0OC01LjcxOS0zLjI0OC0zLjE4MyAwLTYuMjgxIDIuMTg3LTYuMjgxIDYuMTkxIDAgNC42NjEgNS41NzEgOS40MjkgMTIgMTUuODA5IDYuNDMtNi4zOCAxMi0xMS4xNDggMTItMTUuODA5IDAtNC4wMTEtMy4wOTUtNi4xODEtNi4yNzQtNi4xODEiLz48L3N2Zz4=";
     }
   }, [data, props.data.engagement.likes]);
+
   return (
     <div className="post">
       <div className="post_header">
@@ -144,11 +145,11 @@ const Post = (props) => {
           alt="post img"
           onDoubleClick={submitLike}
         />
-        <img
+        {/* <img
           className="post_body_shadow"
           src={props.data.files[0]}
           alt="post shadow"
-        />
+        /> */}
         <div className="post_body_buttons_container">
           <div className="post_body_buttons">
             <button onClick={submitLike}>

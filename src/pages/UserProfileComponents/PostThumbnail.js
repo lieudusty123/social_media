@@ -1,37 +1,30 @@
 import PostThumbnailModal from "./PostModal/PostThumbnailModal";
+import "./PostModal/PostThumbnailModal_styling.module.css";
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PostThumbnail = (props) => {
   const [showModal, setShowModal] = useState(false);
-
-  if (showModal) {
-    const postModal = document.getElementById("post_modal");
+  const postModal = document.getElementById("post_modal");
+  useEffect(() => {
     postModal.addEventListener("click", (e) => {
-      if (e.target.id === "post_modal") {
-        setShowModal(!postModal);
-        postModal.style.display = "none";
-      }
+      switchState(e.target);
     });
-    let styles = {
-      position: "fixed",
-      top: "0",
-      left: "0",
-      width: "100vw",
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.637)",
-      cursor: "pointer",
-    };
-    Object.assign(postModal.style, styles);
-  }
+    function switchState(ele) {
+      if (ele.id === "post_modal") {
+        setShowModal(false);
+        postModal.classList.remove("shown");
+      }
+    }
+  }, [postModal]);
   return (
     <div
       className="profile-page gallery-item"
       tabIndex="0"
-      onClick={() => setShowModal((prev) => !prev)}
+      onClick={() => {
+        setShowModal(true);
+        postModal.classList.add("shown");
+      }}
     >
       <img
         src={props.post.files[0]}

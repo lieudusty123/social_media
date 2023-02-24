@@ -36,7 +36,8 @@ function Modal() {
         <h1>Allow Cookies</h1>
         <div>
           This website uses essential cookies to ensure you get the best
-          experience on our website.
+          experience. We take your privacy seriously and only collect the
+          necessary cookies.
         </div>
         <div>
           <button id="accept" onClick={handleClick}>

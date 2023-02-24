@@ -2,7 +2,6 @@ import { useContext, useRef, useState } from "react";
 import defaultUserImage from "../../files/placeholder_user_image.webp";
 import usersContext from "../../context/usersContext";
 import axios from "axios";
-let image;
 const SetImage = () => {
   const fileRef = useRef();
   const data = useContext(usersContext);
@@ -27,35 +26,29 @@ const SetImage = () => {
     };
   }
   function displayCurrentSelectedImage() {
+    console.log(currentImageRef.current);
     currentImageRef.current.src = URL.createObjectURL(
       fileRef.current["files"][0]
     );
     setDisableInput(false);
   }
   return (
-    <>
-      <img style={{ width: "100px", height: "100px" }} ref={currentImageRef} />
-      <form
-        onSubmit={changeIcon}
-        style={{ background: "rgb(50,50,60)", padding: "1rem", margin: "1rem" }}
-      >
-        <div>Change Icon</div>
-        <img
-          alt="current user img"
-          src={data.image === "default" ? defaultUserImage : data.image}
-          style={{ width: "50px", borderRadius: "50%" }}
-        />
-        <input
-          type="file"
-          ref={fileRef}
-          onChange={displayCurrentSelectedImage}
-        />
-        <button type="submit" disabled={disableInput}>
-          Change Image
-        </button>
-      </form>
-      {/* <button onClick={setBool(!bool)}>Re render components</button> */}
-    </>
+    <form
+      onSubmit={changeIcon}
+      style={{ background: "rgb(50,50,60)", padding: "1rem", margin: "1rem" }}
+    >
+      <div>Change Icon</div>
+      <img
+        ref={currentImageRef}
+        alt="current user img"
+        src={data.image === "default" ? defaultUserImage : data.image}
+        style={{ width: "50px", borderRadius: "50%" }}
+      />
+      <input type="file" ref={fileRef} onChange={displayCurrentSelectedImage} />
+      <button type="submit" disabled={disableInput}>
+        Change Image
+      </button>
+    </form>
   );
 };
 export default SetImage;

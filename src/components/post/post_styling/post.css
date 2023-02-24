@@ -63,6 +63,8 @@
   transition: -webkit-transform 0.1s;
   transition: transform 0.1s;
   transition: transform 0.1s, -webkit-transform 0.1s;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.295);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.295);
 }
 
 .post .post_body_image:hover {
@@ -210,6 +212,8 @@
   outline: none;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .post .post_footer .new_comment button {

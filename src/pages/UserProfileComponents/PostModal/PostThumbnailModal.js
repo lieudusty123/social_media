@@ -1,25 +1,80 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import placeHolderUserImage from "../../../files/placeholder_user_image.webp";
 import { v4 as uuidv4 } from "uuid";
 import styles from "./PostThumbnailModal_styling.module.css";
 import { createPortal } from "react-dom";
+import usersContext from "../../../context/usersContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const PostThumbnailModal = (props) => {
   const [userImage, setUserImage] = useState();
-
+  const data = useContext(usersContext);
+  const navigate = useNavigate();
+  //Comment Hooks
+  const [commentContent, setCommentContent] = useState("");
+  const addCommentRef = useRef();
+  const [mappedComments, setMappedComments] = useState([]);
   // map through the post's comments (with the usage of props) and returns an <li/> for each
-  const commentsMap = props.post.engagement.comments.map((comment) => (
-    <li key={uuidv4()}>
-      <div className={styles["comment_name"]}>- {comment.userName}</div>
-      <div className={styles["comment_content"]}>{comment.content}</div>
-    </li>
-  ));
 
   //when the component loads gets the create profile image from sessionStorage instead of fetching it
   useEffect(() => {
+    const tempArr = props.post.engagement.comments.map((comment) => (
+      <li key={uuidv4()}>
+        <div className={styles["comment_name"]}>- {comment.userName}</div>
+        <div className={styles["comment_content"]}>{comment.content}</div>
+      </li>
+    ));
+    setMappedComments(tempArr);
     setUserImage(sessionStorage.getItem("userProfileImage"));
   }, []);
+  useEffect(() => {
+    let localArr = props.post.engagement.comments.map((element) => (
+      <li key={uuidv4()}>
+        <div
+          className={styles["comment_name"]}
+          onClick={() => {
+            navigate(`/p/${element.userId}`);
+          }}
+        >
+          - {element.userName}
+        </div>
+        <div className={styles["comment_content"]}>{element.content}</div>
+      </li>
+    ));
+    setMappedComments(() => localArr);
+  }, [props.post, navigate]);
+
+  function sendNewComment(e) {
+    e.preventDefault();
+    if (data.userName && commentContent.length > 0) {
+      let localArr = (
+        <li key={uuidv4()}>
+          <div
+            className={styles["comment_name"]}
+            onClick={() => {
+              navigate(`/p/${data.userId}`);
+            }}
+          >
+            - {data.userName}
+          </div>
+          <div className={styles["comment_content"]}>{commentContent}</div>
+        </li>
+      );
+      setMappedComments((oldElements) => [...oldElements, localArr]);
+
+      axios.post("http://localhost:8000/add-comment", {
+        userId: data.userId,
+        userName: data.userName,
+        postId: props.post._id,
+        content: commentContent,
+      });
+      setCommentContent("");
+    } else {
+    }
+  }
+
   return createPortal(
-    <div className={styles["post"]}>
+    <div className={styles["post"]} id="post_thumbnail_modal_wrapper">
       <div className={styles["post_info"]}>
         <div className={styles["post_info_header"]}>
           <div className={styles["user_image_container"]}>
@@ -37,9 +92,14 @@ const PostThumbnailModal = (props) => {
         </div>
         <div className={styles["comment_section_container"]}>
           <div className={styles["section_title"]}>Comments</div>
-          <ul>{commentsMap}</ul>
-          <form className={styles["post_comment"]}>
-            <input type="text" />
+          <ul>{mappedComments}</ul>
+          <form className={styles["post_comment"]} onSubmit={sendNewComment}>
+            <input
+              placeholder="Add a comment..."
+              onChange={(e) => setCommentContent(e.target.value)}
+              value={commentContent}
+              ref={addCommentRef}
+            />
             <button type="submit">Post</button>
           </form>
         </div>

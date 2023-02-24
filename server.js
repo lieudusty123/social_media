@@ -89,7 +89,7 @@ app.post("/login", async function (req, res) {
     .find({ "private_details.email": email }, { "private_details.password": 1 })
     .toArray();
   if (mongoCall.length !== 1) {
-    returnVal = "Nope, email not found";
+    returnVal = "User not found";
     res.status(404).send(returnVal);
   } else {
     let compare = await bcrypt.compare(
@@ -106,7 +106,7 @@ app.post("/login", async function (req, res) {
       };
       res.status(200).send(returnVal);
     } else {
-      returnVal = "Nope, password incorrect";
+      returnVal = "Incorrect password";
       res.status(404).send(returnVal);
     }
   }
@@ -143,11 +143,6 @@ app.post("/new-post", async function (req, res) {
   );
   console.log("posted!");
   res.status(200).send("posted!");
-});
-
-app.post("/clear-all-data", function () {
-  coll.deleteMany({});
-  postsColl.deleteMany({});
 });
 
 app.post("/clear-posts", async function (req, res) {
@@ -367,6 +362,20 @@ app.post("/user-profile", function (req, res) {
       });
   } catch (e) {
     res.status(404).send();
+  }
+});
+
+app.post("/search", (req, res) => {
+  try {
+    console.log(req.body.searchedInput);
+    coll
+      .find({ name: { $regex: req.body.searchedInput } })
+      .sort({ followers: -1 })
+      .limit(5)
+      .toArray()
+      .then((data) => res.status(200).send(data));
+  } catch (err) {
+    res.status(404).send(err);
   }
 });
 

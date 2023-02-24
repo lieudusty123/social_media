@@ -125,7 +125,7 @@ const Form = () => {
           }
         })
         .catch((e) => {
-          alert(e.response.data);
+          setLoginErrorMessage(e.response.data);
         });
     } else if (!isEmail(loginEmail)) {
       setLoginErrorMessage("Invalid Email");
@@ -198,8 +198,16 @@ const Form = () => {
                 }}
                 placeholder="Password"
               />
-              <span>{signupErrorMessage}</span>
+              <div className="wrong-input">{signupErrorMessage}</div>
               <button>Sign Up</button>
+              <div
+                className="signIn-mobile"
+                onClick={() =>
+                  containerRef.current.classList.remove("right-panel-active")
+                }
+              >
+                Sign in
+              </div>
             </form>
           </div>
           <div className="form-container sign-in-container">
@@ -230,8 +238,16 @@ const Form = () => {
                 }}
                 placeholder="Password"
               />
-              <span>{loginErrorMessage}</span>
+              <div className="wrong-input">{loginErrorMessage}</div>
               <button>Sign In</button>
+              <div
+                className="signUp-mobile"
+                onClick={() =>
+                  containerRef.current.classList.add("right-panel-active")
+                }
+              >
+                Sign up
+              </div>
             </form>
           </div>
           <div className="overlay-container">
