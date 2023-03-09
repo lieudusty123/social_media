@@ -1,7 +1,7 @@
 body {
   min-height: 100vh;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(30%, #2e3446), to(#212329));
-  background: linear-gradient(0deg, #2e3446 30%, #212329 100%);
+  background-color: white;
+  color: black;
   background-attachment: fixed;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -13,8 +13,13 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  color: white;
   overflow-x: hidden;
+  width: 100vw;
+  max-width: 100%;
+}
+
+#root {
+  width: 100%;
 }
 
 #feed-page-container {
@@ -28,5 +33,6 @@ body {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  width: 100%;
 }
 /*# sourceMappingURL=feed.css.map */

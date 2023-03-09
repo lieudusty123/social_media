@@ -1,7 +1,6 @@
 import NewPost from "../components/post/NewPost";
 import ShowAllPosts from "../components/ShowAllPosts";
 import usersContext from "../context/usersContext";
-import SetImage from "../components/user/SetImage";
 import Modal from "../components/Modal";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
@@ -18,9 +17,8 @@ const FeedPage = () => {
     <div id="feed-page-container">
       <Nav />
       <Modal />
-      {data.image && <SetImage />}
       {data.email && <NewPost />}
-      <ShowAllPosts />
+      {data.email && <ShowAllPosts />}
     </div>
   );
 };

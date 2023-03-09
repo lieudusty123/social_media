@@ -1,24 +1,25 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
 import usersContext from "../context/usersContext";
 import defaultImage from "../files/placeholder_user_image.webp";
-import BackButton from "../components/reuseable/BackButton/BackButton";
 import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
 import "./UserProfile/UserProfile.css";
 import "./feed_styling/feed.css";
 import Nav from "./Nav";
 function UserProfile() {
   const params = useParams();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [validUser, setValidUser] = useState(null);
   const [followButton, setFollowButton] = useState();
+  const [showChangeButtons, setShowChangeButtons] = useState(false);
   const [userData, setUserData] = useState(null);
   const [postData, setPostData] = useState(null);
   const [followButtonStyle, setFollowButtonStyle] = useState("");
   const data = useContext(usersContext);
-
+  const cameraIconRef = useRef();
+  const profileImage = useRef();
+  const changeImageRef = useRef();
   //gets full user-profile data and display page
   useEffect(() => {
     axios
@@ -43,14 +44,15 @@ function UserProfile() {
           }
         });
         setValidUser(true);
-        sessionStorage.setItem("userProfileImage", res.data.userData[0].image);
         setIsLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         setIsLoading(false);
         setValidUser(false);
       });
   }, [params.id, data]);
+
   function follow() {
     axios
       .post("http://localhost:8000/follow", {
@@ -79,6 +81,36 @@ function UserProfile() {
         console.log("done");
       });
   }
+  function setImageChange() {
+    profileImage.current.src = URL.createObjectURL(
+      changeImageRef.current["files"][0]
+    );
+    setShowChangeButtons(true);
+  }
+  function cancelImageChange() {
+    profileImage.current.src =
+      userData.image === "default" ? defaultImage : userData.image;
+    setShowChangeButtons(false);
+  }
+  function changeIcon() {
+    let passedStr = "";
+    let reader = new FileReader();
+    reader.readAsDataURL(changeImageRef.current["files"][0]);
+    reader.onload = function () {
+      passedStr = reader.result;
+      axios
+        .post("http://localhost:8000/change-icon", {
+          userId: data.userId,
+          image: passedStr,
+        })
+        .then(() => {
+          changeImageRef.current.value = null;
+          console.log("image was changed");
+          setShowChangeButtons(false);
+          data.changeImage(data.email, data.userId, data.userName, passedStr);
+        });
+    };
+  }
   return (
     <>
       {validUser && !isLoading && (
@@ -87,15 +119,92 @@ function UserProfile() {
           <header>
             <div className="container">
               <div className="profile">
-                <div className="profile-image">
-                  <img
-                    src={
-                      userData.image === "default"
-                        ? defaultImage
-                        : userData.image
-                    }
-                    alt=""
-                  />
+                <div
+                  className="profile-image"
+                  style={{
+                    position: "relative",
+                  }}
+                >
+                  {data.userId === userData.uuid && (
+                    <>
+                      {" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          position: "relative",
+                        }}
+                      >
+                        <img
+                          ref={profileImage}
+                          src={
+                            userData.image === "default"
+                              ? defaultImage
+                              : userData.image
+                          }
+                          alt=""
+                          onMouseEnter={() => {
+                            cameraIconRef.current.style.display = "block";
+                            profileImage.current.style.filter =
+                              "brightness(0.75)";
+                          }}
+                          onMouseLeave={() => {
+                            cameraIconRef.current.style.display = "none";
+                            profileImage.current.style.filter = "brightness(1)";
+                          }}
+                        />
+                        {showChangeButtons && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "105%",
+                            }}
+                          >
+                            <button onClick={cancelImageChange}>Cancel</button>
+                            <button onClick={changeIcon}>Change</button>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        ref={changeImageRef}
+                        id="changeImage"
+                        style={{ display: "none" }}
+                        onChange={setImageChange}
+                      />
+                      <label
+                        htmlFor="changeImage"
+                        style={{
+                          position: "absolute",
+                          bottom: "30%",
+                          right: "40%",
+                        }}
+                      >
+                        <i
+                          className="fa fa-camera"
+                          ref={cameraIconRef}
+                          aria-hidden="true"
+                          style={{
+                            fontSize: "4rem",
+                            cursor: "pointer",
+                            display: "none",
+                            color: "#eee",
+                            textShadow: "0 0 5px black",
+                          }}
+                          onMouseEnter={() => {
+                            cameraIconRef.current.style.display = "block";
+                            profileImage.current.style.filter =
+                              "brightness(0.75)";
+                          }}
+                          onMouseLeave={() => {
+                            cameraIconRef.current.style.display = "none";
+                            profileImage.current.style.filter = "brightness(1)";
+                          }}
+                        ></i>
+                      </label>
+                    </>
+                  )}
                 </div>
 
                 <div className="profile-user-settings">
@@ -103,7 +212,7 @@ function UserProfile() {
 
                   {userData.uuid === data.userId && (
                     <button className="profile-page btn profile-edit-btn">
-                      Edit Profile
+                      Edit
                     </button>
                   )}
                   {userData.uuid !== data.userId && followButton && (
@@ -113,7 +222,7 @@ function UserProfile() {
                       style={{
                         ...followButtonStyle,
                         color: "black",
-                        border: "none",
+                        border: "1px solid black",
                         padding: ".2rem 1.5rem",
                       }}
                     >
@@ -128,13 +237,13 @@ function UserProfile() {
                       <span className="profile-stat-count">
                         {userData.posts.length}
                       </span>{" "}
-                      posts
+                      post{userData.posts.length > 1 && "s"}
                     </li>
                     <li>
                       <span className="profile-stat-count">
                         {userData.followers.length}
                       </span>{" "}
-                      followers
+                      follower{userData.followers.length > 1 && "s"}
                     </li>
                     <li>
                       <span className="profile-stat-count">
@@ -166,18 +275,7 @@ function UserProfile() {
       )}
       {isLoading && (
         <div id="skeleton_wrapper">
-          <nav>
-            <BackButton
-              handleClick={() => {
-                navigate("/");
-              }}
-              customStyle={{
-                margin: "0",
-              }}
-            >
-              Home
-            </BackButton>
-          </nav>
+          <Nav />
           <header id="skeleton_header">
             <div id="skeleton_profile_image"></div>
             <div id="skeleton_profile_info_container">

@@ -170,9 +170,12 @@
 }
 
 #skeleton_posts_container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (1fr)[3];
+      grid-template-columns: repeat(3, 1fr);
+  -ms-grid-rows: (1fr)[3];
+      grid-template-rows: repeat(3, 1fr);
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
@@ -227,7 +230,6 @@
 .user-profile-container {
   /* Profile Section */
   /* Gallery Section */
-  /* Loader */
 }
 
 .user-profile-container h1 {
@@ -293,6 +295,20 @@
 
 .user-profile-container .profile-image img {
   border-radius: 50%;
+  cursor: pointer;
+  -webkit-transition: 0.2s -webkit-filter;
+  transition: 0.2s -webkit-filter;
+  transition: 0.2s filter;
+  transition: 0.2s filter, 0.2s -webkit-filter;
+}
+
+.user-profile-container .profile-image img:hover {
+  -webkit-transition: 0.2s -webkit-filter;
+  transition: 0.2s -webkit-filter;
+  transition: 0.2s filter;
+  transition: 0.2s filter, 0.2s -webkit-filter;
+  -webkit-filter: brightness(0.75);
+          filter: brightness(0.75);
 }
 
 .user-profile-container .profile-user-settings,
@@ -369,17 +385,20 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  margin: -10px -10px;
-  padding-bottom: 30px;
 }
 
-.user-profile-container .gallery-item {
+.user-profile-container .gallery .gallery-item {
   position: relative;
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 220px;
-          flex: 1 0 220px;
+  aspect-ratio: 4/3;
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 290px;
   margin: 10px;
   color: #fff;
   cursor: pointer;
@@ -436,17 +455,6 @@
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-}
-
-.user-profile-container .loader {
-  width: 50px;
-  height: 50px;
-  border: 6px solid #999;
-  border-bottom-color: transparent;
-  border-radius: 50%;
-  margin: 0 auto;
-  -webkit-animation: loader 500ms linear infinite;
-          animation: loader 500ms linear infinite;
 }
 
 /* Media Query */
@@ -563,13 +571,6 @@
   }
   .user-profile-container .profile-image {
     grid-row: 1 / -1;
-  }
-  .user-profile-container .gallery {
-    display: -ms-grid;
-    display: grid;
-    -ms-grid-columns: (minmax(220px, 1fr))[auto-fit];
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    grid-gap: 20px;
   }
   .user-profile-container .profile-image,
   .user-profile-container .profile-user-settings,

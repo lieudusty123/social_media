@@ -63,9 +63,11 @@ app.post("/sign-up", function (req, res) {
                       email: req.body.email,
                       password: hash,
                     },
+                    lastLogin: Math.floor(new Date().getTime() / 1000),
                     followers: [],
                     following: [],
                     posts: [],
+                    postsEngagement: [],
                   };
                   coll.insertOne(returnObj);
                   res.status(200).send(returnObj);
@@ -111,7 +113,19 @@ app.post("/login", async function (req, res) {
     }
   }
 });
-
+app.post("/update-user-time", (req, res) => {
+  coll
+    .findOneAndUpdate(
+      { uuid: req.body.user },
+      { $set: { lastLogin: Math.round(new Date().getTime() / 1000) } }
+    )
+    .then(() => {
+      res.status(200);
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
+});
 app.post("/new-post", async function (req, res) {
   function currentTimeToUnix() {
     return Math.round(new Date().getTime() / 1000);
@@ -150,7 +164,7 @@ app.post("/clear-posts", async function (req, res) {
   res.status(200).send("Posts deleted!");
 });
 
-app.get("/all-posts", async function (req, res) {
+app.post("/all-posts", async function (req, res) {
   function unixToRelativeTime(unixTimestamp) {
     const millisecondsPerSecond = 1000;
     const secondsPerMinute = 60;
@@ -187,31 +201,93 @@ app.get("/all-posts", async function (req, res) {
       return `${years} year${years === 1 ? "" : "s"} ago`;
     }
   }
-  postsColl
-    .find({})
-    .sort({ date: -1 })
-    .toArray()
-    .then(async function (posts) {
+
+  try {
+    async function getUserPosts() {
+      const user = await coll.findOne({ uuid: req.body.currentUser });
+      let resArr = [];
+      let index = 0;
+
+      while (resArr.length < 20 && index < 5) {
+        let res = await switchPostMethod(index);
+        res.length > 0 && resArr.push(...res);
+        index++;
+      }
+      async function switchPostMethod(i) {
+        switch (i) {
+          case 0:
+            return await postsColl
+              .find({
+                "userName.uuid": { $in: user.following },
+                _id: { $nin: user.postsEngagement },
+                date: { $gt: user.lastLogin },
+              })
+              .limit(20 - resArr.length)
+              .toArray();
+          case 1:
+            return await postsColl
+              .find({
+                "userName.uuid": { $in: user.following },
+                _id: { $in: user.postsEngagement },
+                date: { $lte: user.lastLogin },
+              })
+              .limit(20 - resArr.length)
+              .toArray();
+          case 2:
+            return await postsColl
+              .find({
+                "userName.uuid": { $in: user.following },
+                _id: { $nin: user.postsEngagement },
+                date: { $lte: user.lastLogin },
+              })
+              .limit(20 - resArr.length)
+              .toArray();
+          case 3:
+            return await postsColl
+              .find({
+                "userName.uuid": { $nin: user.following },
+                date: { $gt: user.lastLogin },
+              })
+              .limit(20 - resArr.length)
+              .toArray();
+          case 4:
+            return await postsColl
+              .find({
+                "userName.uuid": { $nin: user.following },
+                date: { $lt: user.lastLogin },
+              })
+              .limit(20 - resArr.length)
+              .toArray();
+          default:
+            break;
+        }
+      }
       let storedUsers = [];
       let storedImages = [];
-      for (let index = 0; index < posts.length; index++) {
-        posts[index].date = unixToRelativeTime(posts[index].date);
-        if (storedUsers.indexOf(posts[index].userName.name) !== -1) {
-          posts[index].userName.image =
-            storedImages[storedUsers.indexOf(posts[index].userName.name)];
+
+      for (let i = 0; i < resArr.length; i++) {
+        resArr[i].date = unixToRelativeTime(resArr[i].date);
+        if (storedUsers.indexOf(resArr[i].userName.name) !== -1) {
+          resArr[i].userName.image =
+            storedImages[storedUsers.indexOf(resArr[i].userName.name)];
         } else {
           await coll
-            .find({ uuid: posts[index].userName.uuid }, { image: 1 })
+            .find({ uuid: resArr[i].userName.uuid }, { image: 1 })
             .toArray()
             .then((imageRes) => {
-              storedUsers.push(posts[index].userName.name);
+              storedUsers.push(resArr[i].userName.name);
               storedImages.push(imageRes[0].image);
-              posts[index].userName.image = imageRes[0].image;
+              resArr[i].userName.image = imageRes[0].image;
             });
         }
       }
-      res.status(200).send(posts);
-    });
+      res.status(200).send(resArr);
+    }
+
+    getUserPosts();
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
 
 app.post("/get-user-image", function (req, res) {
@@ -272,34 +348,71 @@ app.post("/like-post", function (req, res) {
   postsColl
     .find({ _id: ObjectId(req.body.postId) })
     .toArray()
-    .then((res) => {
-      if (
-        res[0].engagement.likes.includes(req.body.userId) &&
-        req.body.action === "REMOVE"
-      ) {
-        console.log("User already liked");
-        postsColl.updateOne(
-          { _id: ObjectId(req.body.postId) },
-          { $pull: { "engagement.likes": req.body.userId } }
-        );
-      } else if (
-        !res[0].engagement.likes.includes(req.body.userId) &&
-        req.body.action === "ADD"
-      ) {
-        console.log("Liked!");
-        postsColl.updateOne(
+    .then((data) => {
+      checkLikedAndUpdate(data);
+    });
+
+  function checkLikedAndUpdate(data) {
+    if (
+      data[0].engagement.likes.includes(req.body.userId) &&
+      req.body.action === "REMOVE"
+    ) {
+      updateDB(req.body.action);
+    } else if (
+      !data[0].engagement.likes.includes(req.body.userId) &&
+      req.body.action === "ADD"
+    ) {
+      updateDB(req.body.action);
+    }
+  }
+
+  function updateDB(action) {
+    if (action === "ADD") {
+      postsColl
+        .updateOne(
           { _id: ObjectId(req.body.postId) },
           { $push: { "engagement.likes": req.body.userId } }
-        );
-      }
-    });
+        )
+        .then(() => {
+          coll.updateOne(
+            { uuid: req.body.userId },
+            { $addToSet: { postsEngagement: ObjectId(req.body.postId) } }
+          );
+        })
+        .finally(() => {
+          console.log("Added like!");
+        })
+        .catch((err) => res.status(404).send(err));
+    } else if (action === "REMOVE") {
+      postsColl
+        .updateOne(
+          { _id: ObjectId(req.body.postId) },
+          { $pull: { "engagement.likes": req.body.userId } }
+        )
+        .then(() => {
+          coll.updateOne(
+            { uuid: req.body.userId },
+            { $pull: { postsEngagement: ObjectId(req.body.postId) } }
+          );
+        })
+        .finally(() => {
+          console.log("Removed like!");
+        })
+        .catch((err) => res.status(404).send(err));
+    } else return;
+  }
 });
 app.post("/add-comment", function (req, res) {
   postsColl
     .find({ _id: ObjectId(req.body.postId) })
     .toArray()
-    .then((da) => {
-      postsColl.updateOne(
+    .then(() => {
+      addCommentToDB();
+    });
+
+  function addCommentToDB() {
+    postsColl
+      .updateOne(
         { _id: ObjectId(req.body.postId) },
         {
           $push: {
@@ -310,8 +423,18 @@ app.post("/add-comment", function (req, res) {
             },
           },
         }
-      );
-    });
+      )
+      .then(() => {
+        coll.updateOne(
+          { uuid: req.body.userId },
+          { $addToSet: { postsEngagement: ObjectId(req.body.postId) } }
+        );
+      })
+      .finally(() => {
+        console.log("Added comment!");
+      })
+      .catch((err) => res.status(404).send(err));
+  }
 });
 
 app.post("/change-icon", function (req, res) {

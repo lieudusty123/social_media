@@ -1,19 +1,27 @@
 body {
   min-height: 100vh;
-  background: linear-gradient(
-    0deg,
-    rgba(46, 52, 70, 1) 30%,
-    rgba(33, 35, 41, 1) 100%
-  );
+  // background: linear-gradient(
+  //   0deg,
+  //   rgba(46, 52, 70, 1) 30%,
+  //   rgba(33, 35, 41, 1) 100%
+  // );
+  // color: white;
+  background-color: white;
+  color: black;
   background-attachment: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
   overflow-x: hidden;
+  width: 100vw;
+  max-width: 100%;
+}
+#root {
+  width: 100%;
 }
 #feed-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }

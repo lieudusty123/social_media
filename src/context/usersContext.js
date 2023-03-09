@@ -7,6 +7,7 @@ const usersContext = createContext({
   image: "",
   logOut: () => {},
   login: () => {},
+  changeImage: () => {},
 });
 
 export default usersContext;

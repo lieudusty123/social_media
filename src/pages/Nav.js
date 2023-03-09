@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../components/reuseable/BackButton/BackButton";
 import { v4 as uuidv4 } from "uuid";
@@ -12,7 +12,10 @@ const Nav = () => {
   const [autoComplete, setAutoComplete] = useState([]);
   const data = useContext(usersContext);
   const userOptionsRef = useRef();
-
+  const [displayImage, setDisplayImage] = useState("");
+  useEffect(() => {
+    setDisplayImage(data.image);
+  }, [data]);
   function fetchUserList(val) {
     if (val.length > 0) {
       axios
@@ -76,7 +79,7 @@ const Nav = () => {
       <form>
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search..."
           value={searchInputState}
           onChange={(e) => {
             setSearchInputState(e.target.value);
@@ -89,17 +92,17 @@ const Nav = () => {
         className="user_image_container"
         onClick={() => userOptionsRef.current.classList.toggle("shown")}
       >
-        <img
-          src={data.image === "default" ? defaultImage : data.image}
-          className="user_image"
-          alt="current profile pic"
-        />
-        <form>
-          <ul ref={userOptionsRef} className="user_option_ul">
-            <li onClick={() => navigate(`/p/${data.userId}`)}>View Profile</li>
-            <li onClick={logout}>Log out</li>
-          </ul>
-        </form>
+        {data.image !== undefined && (
+          <img
+            src={data.image === "default" ? defaultImage : data.image}
+            className="user_image"
+            alt="current profile pic"
+          />
+        )}
+        <ul ref={userOptionsRef} className="user_option_ul">
+          <li onClick={() => navigate(`/p/${data.userId}`)}>View Profile</li>
+          <li onClick={logout}>Log out</li>
+        </ul>
       </div>
     </nav>
   );
