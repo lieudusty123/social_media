@@ -5,8 +5,8 @@
   width: 327px;
   overflow: hidden;
   border-radius: 30px;
-  -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.123);
-          box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.123);
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.082);
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.082);
   margin-block: 1rem;
   padding-inline: 10px;
 }
@@ -63,8 +63,8 @@
   transition: -webkit-transform 0.1s;
   transition: transform 0.1s;
   transition: transform 0.1s, -webkit-transform 0.1s;
-  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.295);
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.295);
+  -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.384);
+          box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.384);
 }
 
 .post .post_body_image:hover {

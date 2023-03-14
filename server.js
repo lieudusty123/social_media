@@ -159,11 +159,6 @@ app.post("/new-post", async function (req, res) {
   res.status(200).send("posted!");
 });
 
-app.post("/clear-posts", async function (req, res) {
-  postsColl.deleteMany({});
-  res.status(200).send("Posts deleted!");
-});
-
 app.post("/all-posts", async function (req, res) {
   function unixToRelativeTime(unixTimestamp) {
     const millisecondsPerSecond = 1000;

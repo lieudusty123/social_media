@@ -1,0 +1,111 @@
+#post_skeleton_container {
+  $loading-post-width: 335px;
+  $loading-post-border-radius: 15px;
+
+  .loading-post {
+    margin-block: 1rem;
+    width: $loading-post-width;
+    height: 553px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    padding: 16px;
+    border: 1px solid #dbdbdb;
+    border-radius: $loading-post-border-radius;
+
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 16px;
+
+      &-avatar {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background-color: #dbdbdb;
+        margin-right: 12px;
+      }
+
+      &-username {
+        height: 16px;
+        width: 100px;
+        background-color: #dbdbdb;
+      }
+    }
+
+    &-image {
+      height: 0;
+      border-radius: $loading-post-border-radius;
+      padding-bottom: 100%;
+      background-color: #dbdbdb;
+      margin-bottom: 16px;
+    }
+
+    &-likes {
+      height: 16px;
+      width: 40%;
+      background-color: #dbdbdb;
+      margin-bottom: 8px;
+    }
+
+    &-caption {
+      height: 16px;
+      width: 60%;
+      background-color: #dbdbdb;
+      margin-bottom: 8px;
+    }
+
+    &-comments {
+      margin-bottom: 8px;
+
+      &-comment {
+        height: 16px;
+        width: 100%;
+        background-color: #dbdbdb;
+        margin-bottom: 4px;
+      }
+    }
+
+    &-time {
+      height: 16px;
+      width: 40%;
+      background-color: #dbdbdb;
+    }
+
+    &-button {
+      height: 32px;
+      width: 100%;
+      margin-top: 3rem;
+      border-radius: $loading-post-border-radius;
+      background-color: #dbdbdb;
+    }
+
+    &-button,
+    &-avatar,
+    &-username,
+    &-image,
+    &-likes,
+    &-caption,
+    &-comment,
+    &-time {
+      animation: loading 8s linear infinite;
+      background: linear-gradient(
+        to right,
+        #dbdbdb 8%,
+        #f3f3f3 18%,
+        #dbdbdb 33%
+      );
+      background-size: $loading-post-width 100%;
+    }
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: -$loading-post-width 0;
+    }
+    100% {
+      background-position: calc(#{$loading-post-width} + 100%) 0;
+    }
+  }
+}

@@ -1,26 +1,27 @@
 import axios from "axios";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../components/reuseable/BackButton/BackButton";
 import { v4 as uuidv4 } from "uuid";
 import "./nav_styling/Nav_styling.css";
 import defaultImage from "../files/placeholder_user_image.webp";
 import usersContext from "../context/usersContext";
+
+let interval;
 const Nav = () => {
   const navigate = useNavigate();
   const [searchInputState, setSearchInputState] = useState("");
   const [autoComplete, setAutoComplete] = useState([]);
+  const [navLoading, setNavLoading] = useState(false);
   const data = useContext(usersContext);
   const userOptionsRef = useRef();
-  const [displayImage, setDisplayImage] = useState("");
-  useEffect(() => {
-    setDisplayImage(data.image);
-  }, [data]);
-  function fetchUserList(val) {
-    if (val.length > 0) {
+
+  function fetchUserList(data) {
+    clearInterval(interval);
+    if (data.length > 0) {
       axios
         .post("http://localhost:8000/search", {
-          searchedInput: val,
+          searchedInput: data,
         })
         .then((res) => {
           console.log(res.data);
@@ -54,10 +55,24 @@ const Nav = () => {
             );
           });
           setAutoComplete(tempArr);
+          setNavLoading(false);
         });
     } else {
       setAutoComplete([]);
     }
+  }
+
+  function refreshTimer(data) {
+    if (interval) {
+      clearInterval(interval);
+    }
+    if (!navLoading) {
+      setNavLoading(true);
+    }
+
+    interval = setInterval(() => {
+      fetchUserList(data);
+    }, 500);
   }
 
   function logout() {
@@ -83,17 +98,48 @@ const Nav = () => {
           value={searchInputState}
           onChange={(e) => {
             setSearchInputState(e.target.value);
-            fetchUserList(e.target.value);
+            refreshTimer(e.target.value);
           }}
         />
-        <ul>{autoComplete}</ul>
+        {navLoading === false && (
+          <ul
+            style={{
+              border: autoComplete.length === 0 && "none",
+            }}
+          >
+            {autoComplete}
+          </ul>
+        )}
+        {navLoading === true && searchInputState.length > 0 && (
+          <ul className="skeleton-ul">
+            <li className="skeleton-li">
+              <div className="skeleton-li-image"></div>
+              <div className="skeleton-li-info">
+                <div className="skeleton-li-name"></div>
+                <div className="skeleton-li-id"></div>
+              </div>
+            </li>
+            <li className="skeleton-li">
+              <div className="skeleton-li-image"></div>
+              <div className="skeleton-li-info">
+                <div className="skeleton-li-name"></div>
+                <div className="skeleton-li-id"></div>
+              </div>
+            </li>
+            <li className="skeleton-li">
+              <div className="skeleton-li-image"></div>
+              <div className="skeleton-li-info">
+                <div className="skeleton-li-name"></div>
+                <div className="skeleton-li-id"></div>
+              </div>
+            </li>
+          </ul>
+        )}
       </form>
-      <div
-        className="user_image_container"
-        onClick={() => userOptionsRef.current.classList.toggle("shown")}
-      >
+      <div className="user_image_container">
         {data.image !== undefined && (
           <img
+            onClick={() => userOptionsRef.current.classList.toggle("shown")}
             src={data.image === "default" ? defaultImage : data.image}
             className="user_image"
             alt="current profile pic"

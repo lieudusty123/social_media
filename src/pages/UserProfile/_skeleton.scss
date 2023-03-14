@@ -24,13 +24,25 @@
     margin: 2rem auto;
     display: flex;
     flex-direction: row;
+    align-items: center;
     border-radius: 5px;
   }
   &_profile {
+    @media (max-width: 1000px) {
+      &_image {
+        width: 100px;
+        height: 100px;
+      }
+    }
+    @media (min-width: 1000px) {
+      &_image {
+        width: 152px;
+        height: 152px;
+      }
+    }
+
     &_image {
       aspect-ratio: 1/1;
-      width: 10rem;
-
       border-radius: 50%;
       @include bg_ani();
       display: inline-block;
@@ -89,18 +101,16 @@
       justify-content: center;
     }
     &_container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      justify-content: center;
+      display: flex;
+      flex-direction: row;
       flex-wrap: wrap;
-      width: 90%;
+      justify-content: center;
+      max-width: 935px;
       div {
-        aspect-ratio: 1.5 / 1;
-        border-radius: 5px;
+        aspect-ratio: 4/3;
         @include bg_ani();
-        width: 300px;
-        margin: 15px;
+        width: 290px;
+        margin: 10px;
       }
     }
   }

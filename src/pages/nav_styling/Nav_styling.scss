@@ -1,13 +1,11 @@
+@import "_nav_skeleton.scss";
 @mixin flexCenter($direction, $justify: center, $align: center) {
   display: flex;
   flex-direction: $direction;
   justify-content: $justify;
   align-items: $align;
 }
-@media screen and (max-width: 400px) {
-  #main_nav {
-  }
-}
+
 #main_nav {
   width: 100%;
   height: 70px;
@@ -20,7 +18,6 @@
   box-sizing: border-box;
   form {
     position: relative;
-    width: 30%;
     input {
       padding-inline: 10px;
       width: 100%;
@@ -31,14 +28,15 @@
       box-sizing: border-box;
     }
     ul {
+      box-sizing: border-box;
       border: 1px solid lightgray;
       border-top: none;
-
       list-style: none;
       position: absolute;
       padding: 0;
       margin: 0;
       z-index: 10;
+      width: 100%;
       top: 100%;
       overflow: hidden;
       border-bottom-left-radius: 5px;
@@ -47,13 +45,15 @@
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        box-sizing: border-box;
         border-bottom: 1px solid rgb(212, 212, 212);
-        padding-left: 0.5rem;
+        padding-inline: 0.5rem;
         background-color: white;
         color: black;
         width: 100%;
-        height: 2.8rem;
+        height: 50px;
+
         transition: 0.15s background-color;
         cursor: pointer;
         &:last-of-type {
@@ -63,9 +63,15 @@
           transition: 0.15s background-color;
           background-color: rgb(240, 240, 240);
         }
+        div {
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
 
         img {
-          width: calc(2.8rem - 5%);
+          object-fit: cover;
+          width: 2.5rem;
+          height: 2.5rem;
           border-radius: 50%;
           margin-right: 0.5rem;
         }
@@ -107,19 +113,51 @@
     }
   }
   .user_image_container {
-    width: 50px;
     position: relative;
+    display: flex;
+    justify-content: flex-end;
     .user_image {
       cursor: pointer;
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.589);
-      transition: 0.2s box-shadow;
-      &:hover {
-        transition: 0.2s box-shadow;
-        box-shadow: 0px 0px 7px black;
-      }
+      object-fit: cover;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #main_nav {
+    .user_image_container {
+      width: 50px;
+    }
+    form {
+      width: 60%;
+    }
+  }
+}
+@media screen and (min-width: 601px) {
+  #main_nav {
+    form {
+      width: 50%;
+    }
+
+    .user_image_container {
+      width: 100px;
+    }
+  }
+}
+@media screen and (min-width: 801px) {
+  #main_nav {
+    form {
+      width: 40%;
+    }
+  }
+}
+@media screen and (min-width: 1001px) {
+  #main_nav {
+    form {
+      width: 30%;
     }
   }
 }

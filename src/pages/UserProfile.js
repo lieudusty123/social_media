@@ -7,6 +7,7 @@ import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
 import "./UserProfile/UserProfile.css";
 import "./feed_styling/feed.css";
 import Nav from "./Nav";
+import UserNotFound from "./UserNotFound";
 function UserProfile() {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -205,6 +206,29 @@ function UserProfile() {
                       </label>
                     </>
                   )}
+                  {data.userId !== userData.uuid && (
+                    <>
+                      {" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          position: "relative",
+                        }}
+                      >
+                        <img
+                          ref={profileImage}
+                          src={
+                            userData.image === "default"
+                              ? defaultImage
+                              : userData.image
+                          }
+                          alt=""
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className="profile-user-settings">
@@ -221,9 +245,14 @@ function UserProfile() {
                       onClick={follow}
                       style={{
                         ...followButtonStyle,
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        lineHeight: "1.8",
+                        border: "1px solid #dbdbdb",
+                        borderRadius: "3px",
+                        padding: "0 24px",
+                        marginLeft: "20px",
                         color: "black",
-                        border: "1px solid black",
-                        padding: ".2rem 1.5rem",
                       }}
                     >
                       {followButton}
@@ -303,6 +332,7 @@ function UserProfile() {
           </main>
         </div>
       )}
+      {!validUser && !isLoading && <UserNotFound />}
     </>
   );
 }

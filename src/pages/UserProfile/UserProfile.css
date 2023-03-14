@@ -19,12 +19,28 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   border-radius: 5px;
+}
+
+@media (max-width: 1000px) {
+  #skeleton_profile_image {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (min-width: 1000px) {
+  #skeleton_profile_image {
+    width: 152px;
+    height: 152px;
+  }
 }
 
 #skeleton_profile_image {
   aspect-ratio: 1/1;
-  width: 10rem;
   border-radius: 50%;
   background-color: gainsboro;
   -webkit-animation: endless infinite ease-in-out 1s;
@@ -170,28 +186,28 @@
 }
 
 #skeleton_posts_container {
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: (1fr)[3];
-      grid-template-columns: repeat(3, 1fr);
-  -ms-grid-rows: (1fr)[3];
-      grid-template-rows: repeat(3, 1fr);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  width: 90%;
+  max-width: 935px;
 }
 
 #skeleton_posts_container div {
-  aspect-ratio: 1.5 / 1;
-  border-radius: 5px;
+  aspect-ratio: 4/3;
   background-color: gainsboro;
   -webkit-animation: endless infinite ease-in-out 1s;
           animation: endless infinite ease-in-out 1s;
-  width: 300px;
-  margin: 15px;
+  width: 290px;
+  margin: 10px;
 }
 
 @keyframes endless {
@@ -295,20 +311,9 @@
 
 .user-profile-container .profile-image img {
   border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
   cursor: pointer;
-  -webkit-transition: 0.2s -webkit-filter;
-  transition: 0.2s -webkit-filter;
-  transition: 0.2s filter;
-  transition: 0.2s filter, 0.2s -webkit-filter;
-}
-
-.user-profile-container .profile-image img:hover {
-  -webkit-transition: 0.2s -webkit-filter;
-  transition: 0.2s -webkit-filter;
-  transition: 0.2s filter;
-  transition: 0.2s filter, 0.2s -webkit-filter;
-  -webkit-filter: brightness(0.75);
-          filter: brightness(0.75);
 }
 
 .user-profile-container .profile-user-settings,
@@ -391,6 +396,12 @@
           flex-direction: row;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .user-profile-container .gallery .gallery-item {

@@ -1,0 +1,42 @@
+.skeleton-ul {
+  .skeleton-li {
+    height: 50px;
+    &-image {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      background-color: #dbdbdb;
+    }
+    &-name {
+      height: 1rem;
+      width: 60px;
+      margin-bottom: 3px;
+    }
+    &-id {
+      height: 1rem;
+      width: 40px;
+    }
+
+    &-image,
+    &-name,
+    &-id {
+      animation: loading 8s linear infinite;
+      background: linear-gradient(
+        to right,
+        #dbdbdb 8%,
+        #f3f3f3 18%,
+        #dbdbdb 33%
+      );
+      background-size: 200%;
+      @keyframes loading {
+        0% {
+          background-position: -100% 0;
+        }
+        100% {
+          background-position: calc(400px + 100%) 0;
+        }
+      }
+    }
+  }
+}
