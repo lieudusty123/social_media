@@ -22,7 +22,7 @@ const ShowAllPosts = () => {
         setIsLoading(false);
         document.querySelector("body").style.overflow = "auto";
       });
-  }, []);
+  }, [data.userId]);
 
   return (
     <Fragment>
