@@ -38,7 +38,7 @@ const Post = (props) => {
       );
       setMappedComments((oldElements) => [...oldElements, localArr]);
 
-      axios.post("http://localhost:8000/add-comment", {
+      axios.post("https://omerinstagram.netlify.app/add-comment", {
         userId: data.userId,
         userName: data.userName,
         postId: props.data._id,
@@ -48,7 +48,7 @@ const Post = (props) => {
     }
   }
   function axiosLike(str) {
-    axios.post("http://localhost:8000/like-post", {
+    axios.post("https://omerinstagram.netlify.app/like-post", {
       userId: data.userId,
       postId: props.data._id,
       action: str,

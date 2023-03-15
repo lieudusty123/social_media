@@ -12,7 +12,9 @@ const ShowAllPosts = () => {
   useEffect(() => {
     document.querySelector("body").style.overflow = "hidden";
     axios
-      .post("http://localhost:8000/all-posts", { currentUser: data.userId })
+      .post("https://omerinstagram.netlify.app/all-posts", {
+        currentUser: data.userId,
+      })
       .then((res) => {
         let arr = [];
         res.data.forEach((post) => {

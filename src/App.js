@@ -20,7 +20,9 @@ function App() {
     ) {
       let cookies = JSON.parse(cookiesStr);
       axios
-        .post("http://localhost:8000/get-user-image", { id: cookies.userId })
+        .post("https://omerinstagram.netlify.app/get-user-image", {
+          id: cookies.userId,
+        })
         .then((res) => {
           console.log(res);
           data.login(cookies.email, cookies.userId, cookies.userName, res.data);

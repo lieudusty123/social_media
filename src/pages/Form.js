@@ -59,7 +59,7 @@ const Form = () => {
       signupPassword.length >= 5
     ) {
       axios
-        .post("http://localhost:8000/sign-up", {
+        .post("https://omerinstagram.netlify.app/sign-up", {
           name: signupName,
           id: signupId,
           email: signupEmail,
@@ -104,7 +104,7 @@ const Form = () => {
     e.preventDefault();
     if (isEmail(loginEmail) && loginPassword.length >= 5) {
       axios
-        .post("http://localhost:8000/login", {
+        .post("https://omerinstagram.netlify.app/login", {
           email: loginEmail,
           password: loginPassword,
         })

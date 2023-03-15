@@ -62,7 +62,7 @@ const PostThumbnailModal = (props) => {
       );
       setMappedComments((oldElements) => [...oldElements, localArr]);
 
-      axios.post("http://localhost:8000/add-comment", {
+      axios.post("https://omerinstagram.netlify.app/add-comment", {
         userId: data.userId,
         userName: data.userName,
         postId: props.post._id,
