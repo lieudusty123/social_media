@@ -12,8 +12,6 @@ Welcome to my Instagram Clone project. This project was created using ReactJS, N
 - Follow / unfollow functionality
 - Routing with React Router
 
-![post design](./readme_files/post.png)
-
 ## Technologies Used
 
 - ReactJS
