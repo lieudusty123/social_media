@@ -13,8 +13,9 @@ const bcrypt = require("bcryptjs");
 //mongo setup
 const { MongoClient } = require("mongodb");
 var ObjectId = require("mongodb").ObjectId;
-const uri = fs.readFileSync("./keys/admin.txt", "utf8");
-const client = new MongoClient(uri);
+const client = new MongoClient(
+  "mongodb+srv://users:nl15hlGtXKqOIits@socialmediaapp.9slkydr.mongodb.net/test"
+);
 
 //mongo specifics
 const db = client.db("socialMedia");
