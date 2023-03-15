@@ -13,9 +13,8 @@ const bcrypt = require("bcryptjs");
 //mongo setup
 const { MongoClient } = require("mongodb");
 var ObjectId = require("mongodb").ObjectId;
-const client = new MongoClient(
-  "mongodb+srv://users:nl15hlGtXKqOIits@socialmediaapp.9slkydr.mongodb.net/test"
-);
+require("dotenv").config();
+const client = new MongoClient(process.env.MONGO_CONNECTION);
 
 //mongo specifics
 const db = client.db("socialMedia");
