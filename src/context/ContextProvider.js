@@ -20,7 +20,7 @@ function reducerFunc(state, action) {
 
     case "LOGOUT":
       Cookies.remove("user");
-      axios.post("http://localhost:3000/update-user-time", {
+      axios.post("https://social-media-g0nc.onrender.com/update-user-time", {
         user: action.userId,
       });
       return {

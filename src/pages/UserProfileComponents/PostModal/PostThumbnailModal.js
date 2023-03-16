@@ -62,7 +62,7 @@ const PostThumbnailModal = (props) => {
       );
       setMappedComments((oldElements) => [...oldElements, localArr]);
 
-      axios.post("http://localhost:3000/add-comment", {
+      axios.post("https://social-media-g0nc.onrender.com/add-comment", {
         userId: data.userId,
         userName: data.userName,
         postId: props.post._id,

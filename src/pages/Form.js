@@ -59,7 +59,7 @@ const Form = () => {
       signupPassword.length >= 5
     ) {
       axios
-        .post("http://localhost:3000/sign-up", {
+        .post("https://social-media-g0nc.onrender.com/sign-up", {
           name: signupName,
           id: signupId,
           email: signupEmail,
@@ -104,7 +104,7 @@ const Form = () => {
     e.preventDefault();
     if (isEmail(loginEmail) && loginPassword.length >= 5) {
       axios
-        .post("http://localhost:3000/login", {
+        .post("https://social-media-g0nc.onrender.com/login", {
           email: loginEmail,
           password: loginPassword,
         })

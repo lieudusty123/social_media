@@ -24,7 +24,9 @@ function UserProfile() {
   //gets full user-profile data and display page
   useEffect(() => {
     axios
-      .post("http://localhost:3000/user-profile", { id: params.id })
+      .post("https://social-media-g0nc.onrender.com/user-profile", {
+        id: params.id,
+      })
       .then((res) => {
         setUserData(res.data.userData[0]);
         setPostData(res.data.posts);
@@ -56,7 +58,7 @@ function UserProfile() {
 
   function follow() {
     axios
-      .post("http://localhost:3000/follow", {
+      .post("https://social-media-g0nc.onrender.com/follow", {
         targetUuid: userData.uuid,
         currentUuid: data.userId,
       })
@@ -100,7 +102,7 @@ function UserProfile() {
     reader.onload = function () {
       passedStr = reader.result;
       axios
-        .post("http://localhost:3000/change-icon", {
+        .post("https://social-media-g0nc.onrender.com/change-icon", {
           userId: data.userId,
           image: passedStr,
         })

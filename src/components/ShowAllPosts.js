@@ -12,7 +12,7 @@ const ShowAllPosts = () => {
   useEffect(() => {
     document.querySelector("body").style.overflow = "hidden";
     axios
-      .post("http://localhost:3000/all-posts", {
+      .post("https://social-media-g0nc.onrender.com/all-posts", {
         currentUser: data.userId,
       })
       .then((res) => {
