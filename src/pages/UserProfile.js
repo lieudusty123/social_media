@@ -24,7 +24,7 @@ function UserProfile() {
   //gets full user-profile data and display page
   useEffect(() => {
     axios
-      .post("https://omerinstagram.netlify.app/user-profile", { id: params.id })
+      .post("http://localhost:3000/user-profile", { id: params.id })
       .then((res) => {
         setUserData(res.data.userData[0]);
         setPostData(res.data.posts);
@@ -56,7 +56,7 @@ function UserProfile() {
 
   function follow() {
     axios
-      .post("https://omerinstagram.netlify.app/follow", {
+      .post("http://localhost:3000/follow", {
         targetUuid: userData.uuid,
         currentUuid: data.userId,
       })
@@ -100,7 +100,7 @@ function UserProfile() {
     reader.onload = function () {
       passedStr = reader.result;
       axios
-        .post("https://omerinstagram.netlify.app/change-icon", {
+        .post("http://localhost:3000/change-icon", {
           userId: data.userId,
           image: passedStr,
         })

@@ -15,7 +15,7 @@ const NewPost = () => {
     e.preventDefault();
     if (imageRef.current["files"][0] && textData.length > 0) {
       axios
-        .post("https://omerinstagram.netlify.app/new-post", {
+        .post("http://localhost:3000/new-post", {
           userId: data.userId,
           image: displayedImage,
           title: textData,

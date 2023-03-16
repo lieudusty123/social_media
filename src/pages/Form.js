@@ -59,7 +59,7 @@ const Form = () => {
       signupPassword.length >= 5
     ) {
       axios
-        .post("/.netlify/functions/api/sign-up", {
+        .post("http://localhost:3000/sign-up", {
           name: signupName,
           id: signupId,
           email: signupEmail,
@@ -104,7 +104,7 @@ const Form = () => {
     e.preventDefault();
     if (isEmail(loginEmail) && loginPassword.length >= 5) {
       axios
-        .post("/.netlify/functions/api/login", {
+        .post("http://localhost:3000/login", {
           email: loginEmail,
           password: loginPassword,
         })

@@ -2,6 +2,15 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const port = 3000;
+const buildPath = path.join(__dirname, "build");
+app.use(express.json());
+app.use(cors());
+app.use(express.static(buildPath));
 
 //file setup
 const fs = require("fs");
@@ -13,7 +22,6 @@ const bcrypt = require("bcryptjs");
 //mongo setup
 const { MongoClient } = require("mongodb");
 var ObjectId = require("mongodb").ObjectId;
-require("dotenv").config();
 const client = new MongoClient(process.env.MONGO_CONNECTION);
 
 //mongo specifics
@@ -29,8 +37,10 @@ app.use(
     parameterLimit: 50000,
   })
 );
-app.use(express.json());
-app.use(cors());
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
 
 async function connect() {
   try {
@@ -497,7 +507,7 @@ app.post("/search", (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log("- Server up! Port 8000");
+app.listen(port, () => {
+  console.log("- Server up!");
   connect();
 });
