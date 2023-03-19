@@ -6,7 +6,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const port = 3000;
+const port = 5000;
 const buildPath = path.join(__dirname, "build");
 app.use(express.json());
 app.use(cors());
