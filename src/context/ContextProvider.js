@@ -20,7 +20,7 @@ function reducerFunc(state, action) {
 
     case "LOGOUT":
       Cookies.remove("user");
-      axios.post("https://social-media-g0nc.onrender.com/update-user-time", {
+      axios.post("https://omerinstagram.netlify.app/update-user-time", {
         user: action.userId,
       });
       return {
