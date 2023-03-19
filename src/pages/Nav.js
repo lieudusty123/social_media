@@ -20,7 +20,7 @@ const Nav = () => {
     clearInterval(interval);
     if (data.length > 0) {
       axios
-        .post("https://omerinstagram.netlify.app/search", {
+        .post("https://social-media-g0nc.onrender.com/search", {
           searchedInput: data,
         })
         .then((res) => {
