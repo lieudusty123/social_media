@@ -32,7 +32,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "build": "react-scripts build && xcopy _redirects build\\_redirects /y",
+    "build": "react-scripts build && echo '/* /index.html  200' | cat >build/_redirects ",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "nodemon server"
