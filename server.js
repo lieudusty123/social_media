@@ -16,7 +16,7 @@ app.use(express.static(buildPath));
 const fs = require("fs");
 var bodyParser = require("body-parser");
 
-// password hash
+//password hash
 const bcrypt = require("bcryptjs");
 
 //mongo setup
