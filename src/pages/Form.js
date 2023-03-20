@@ -59,7 +59,7 @@ const Form = () => {
       signupPassword.length >= 5
     ) {
       axios
-        .post("https://omerinstagram.netlify.app/sign-up", {
+        .post("https://tan-buffalo-yoke.cyclic.app/sign-up", {
           name: signupName,
           id: signupId,
           email: signupEmail,
@@ -104,7 +104,7 @@ const Form = () => {
     e.preventDefault();
     if (isEmail(loginEmail) && loginPassword.length >= 5) {
       axios
-        .post("https://omerinstagram.netlify.app/login", {
+        .post("https://tan-buffalo-yoke.cyclic.app/login", {
           email: loginEmail,
           password: loginPassword,
         })
