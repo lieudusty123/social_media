@@ -20,7 +20,7 @@ const Nav = () => {
     clearInterval(interval);
     if (data.length > 0) {
       axios
-        .post("https://social-media-g0nc.onrender.com/search", {
+        .post("/search", {
           searchedInput: data,
         })
         .then((res) => {

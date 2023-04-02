@@ -12,7 +12,7 @@ const ShowAllPosts = () => {
   useEffect(() => {
     document.querySelector("body").style.overflow = "hidden";
     axios
-      .post("https://tan-buffalo-yoke.cyclic.app/all-posts", {
+      .post("/all-posts", {
         currentUser: data.userId,
       })
       .then((res) => {

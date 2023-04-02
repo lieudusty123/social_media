@@ -7,11 +7,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const port = 5000;
-const buildPath = path.join(__dirname, "build");
-app.use(express.json());
-app.use(cors());
-app.use(express.static(buildPath));
-
+// const buildPath = path.join(__dirname, "build");
+// console.log(buildPath);
 //file setup
 const fs = require("fs");
 var bodyParser = require("body-parser");
@@ -38,9 +35,9 @@ app.use(
   })
 );
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(buildPath, "index.html"));
-});
+app.use(express.json());
+app.use(cors());
+app.use(express.static("build"));
 
 async function connect() {
   try {
@@ -94,8 +91,8 @@ app.post("/sign-up", function (req, res) {
 });
 
 app.post("/login", async function (req, res) {
-  const email = req.body.email;
-  const password = req.body.password;
+  const email = req.body.data.email;
+  const password = req.body.data.password;
   let returnVal = {};
   let mongoCall = await coll
     .find({ "private_details.email": email }, { "private_details.password": 1 })
@@ -350,6 +347,7 @@ app.post("/follow", function (req, res) {
 });
 
 app.post("/like-post", function (req, res) {
+  console.log(req.body);
   postsColl
     .find({ _id: ObjectId(req.body.postId) })
     .toArray()
@@ -505,6 +503,9 @@ app.post("/search", (req, res) => {
   } catch (err) {
     res.status(404).send(err);
   }
+});
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build/index.html"));
 });
 
 app.listen(port, () => {

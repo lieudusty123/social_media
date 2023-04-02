@@ -20,7 +20,7 @@ function App() {
     ) {
       let cookies = JSON.parse(cookiesStr);
       axios
-        .post("https://social-media-g0nc.onrender.com/get-user-image", {
+        .post("/get-user-image", {
           id: cookies.userId,
         })
         .then((res) => {

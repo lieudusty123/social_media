@@ -59,7 +59,7 @@ const Form = () => {
       signupPassword.length >= 5
     ) {
       axios
-        .post("https://tan-buffalo-yoke.cyclic.app/sign-up", {
+        .post("/sign-up", {
           name: signupName,
           id: signupId,
           email: signupEmail,
@@ -104,7 +104,7 @@ const Form = () => {
     e.preventDefault();
     if (isEmail(loginEmail) && loginPassword.length >= 5) {
       axios
-        .post("https://tan-buffalo-yoke.cyclic.app/login", {
+        .post("/login", {
           headers: { "Access-Control-Allow-Origin": "*" },
           data: {
             email: loginEmail,
