@@ -507,9 +507,9 @@ app.post("/search", (req, res) => {
 // app.get("*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "build/index.html"));
 // });
-app.get("/this", (req, res) => {
-  res.send("<h1>Please work</h1>");
-});
+// app.get("/this", (req, res) => {
+//   res.send("<h1>Please work</h1>");
+// });
 app.listen(port, () => {
   console.log("- Server up!");
   connect();
