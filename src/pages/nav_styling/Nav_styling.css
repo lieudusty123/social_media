@@ -154,6 +154,8 @@
 
 #main_nav .user_option_ul {
   display: none;
+  z-index: 3;
+  background-color: white;
 }
 
 #main_nav .user_option_ul.shown {

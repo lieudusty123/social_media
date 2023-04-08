@@ -469,7 +469,7 @@
 }
 
 /* Media Query */
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
   .user-profile-container .profile {
     display: -webkit-box;
     display: -ms-flexbox;
