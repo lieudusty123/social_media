@@ -6,7 +6,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 // const buildPath = path.join(__dirname, "build");
 // console.log(buildPath);
 //file setup
