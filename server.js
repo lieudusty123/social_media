@@ -349,7 +349,7 @@ app.post("/follow", function (req, res) {
 app.post("/like-post", function (req, res) {
   console.log(req.body);
   postsColl
-    .find({ _id: ObjectId(req.body.postId) })
+    .find({ _id: new ObjectId(req.body.postId) })
     .toArray()
     .then((data) => {
       checkLikedAndUpdate(data);
@@ -373,13 +373,13 @@ app.post("/like-post", function (req, res) {
     if (action === "ADD") {
       postsColl
         .updateOne(
-          { _id: ObjectId(req.body.postId) },
+          { _id: new ObjectId(req.body.postId) },
           { $push: { "engagement.likes": req.body.userId } }
         )
         .then(() => {
           coll.updateOne(
             { uuid: req.body.userId },
-            { $addToSet: { postsEngagement: ObjectId(req.body.postId) } }
+            { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } }
           );
         })
         .finally(() => {
@@ -389,13 +389,13 @@ app.post("/like-post", function (req, res) {
     } else if (action === "REMOVE") {
       postsColl
         .updateOne(
-          { _id: ObjectId(req.body.postId) },
+          { _id: new ObjectId(req.body.postId) },
           { $pull: { "engagement.likes": req.body.userId } }
         )
         .then(() => {
           coll.updateOne(
             { uuid: req.body.userId },
-            { $pull: { postsEngagement: ObjectId(req.body.postId) } }
+            { $pull: { postsEngagement: new ObjectId(req.body.postId) } }
           );
         })
         .finally(() => {
@@ -407,7 +407,7 @@ app.post("/like-post", function (req, res) {
 });
 app.post("/add-comment", function (req, res) {
   postsColl
-    .find({ _id: ObjectId(req.body.postId) })
+    .find({ _id: new ObjectId(req.body.postId) })
     .toArray()
     .then(() => {
       addCommentToDB();
@@ -416,7 +416,7 @@ app.post("/add-comment", function (req, res) {
   function addCommentToDB() {
     postsColl
       .updateOne(
-        { _id: ObjectId(req.body.postId) },
+        { _id: new ObjectId(req.body.postId) },
         {
           $push: {
             "engagement.comments": {
@@ -430,7 +430,7 @@ app.post("/add-comment", function (req, res) {
       .then(() => {
         coll.updateOne(
           { uuid: req.body.userId },
-          { $addToSet: { postsEngagement: ObjectId(req.body.postId) } }
+          { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } }
         );
       })
       .finally(() => {
@@ -507,9 +507,7 @@ app.post("/search", (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build/index.html"));
 });
-app.get("/this", (req, res) => {
-  res.send("<h1>Please work</h1>");
-});
+
 app.listen(port, () => {
   console.log("- Server up!");
   connect();
