@@ -85,6 +85,8 @@
   }
   .user_option_ul {
     display: none;
+    z-index: 3;
+    background-color: white;
     &.shown {
       width: max-content;
       border-radius: 5px;
