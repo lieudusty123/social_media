@@ -504,9 +504,9 @@ app.post("/search", (req, res) => {
     res.status(404).send(err);
   }
 });
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "build/index.html"));
-// });
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build/index.html"));
+});
 // app.get("/this", (req, res) => {
 //   res.send("<h1>Please work</h1>");
 // });
