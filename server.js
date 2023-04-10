@@ -7,8 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const port = process.env.PORT || 5000;
-// const buildPath = path.join(__dirname, "build");
-// console.log(buildPath);
+
 //file setup
 const fs = require("fs");
 var bodyParser = require("body-parser");
@@ -91,8 +90,8 @@ app.post("/sign-up", function (req, res) {
 });
 
 app.post("/login", async function (req, res) {
-  const email = req.body.data.email;
-  const password = req.body.data.password;
+  const email = req.body.email;
+  const password = req.body.password;
   let returnVal = {};
   let mongoCall = await coll
     .find({ "private_details.email": email }, { "private_details.password": 1 })

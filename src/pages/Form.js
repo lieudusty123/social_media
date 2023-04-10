@@ -105,11 +105,8 @@ const Form = () => {
     if (isEmail(loginEmail) && loginPassword.length >= 5) {
       axios
         .post("/login", {
-          headers: { "Access-Control-Allow-Origin": "*" },
-          data: {
-            email: loginEmail,
-            password: loginPassword,
-          },
+          email: loginEmail,
+          password: loginPassword,
         })
         .then((res) => {
           data.login(

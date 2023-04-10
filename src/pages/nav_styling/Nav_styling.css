@@ -68,6 +68,7 @@
 
 #main_nav form {
   position: relative;
+  margin-inline: 1rem;
 }
 
 #main_nav form input {

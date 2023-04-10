@@ -365,7 +365,7 @@
   display: inline-block;
   font-size: 16px;
   line-height: 1.5;
-  margin-right: 40px;
+  margin-right: 20px;
   cursor: pointer;
 }
 
@@ -396,9 +396,9 @@
           flex-direction: row;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -435,6 +435,11 @@
 
 .user-profile-container .gallery-item-info {
   display: none;
+}
+
+.user-profile-container .gallery-item-info ul {
+  margin: 0;
+  padding: 0;
 }
 
 .user-profile-container .gallery-item-info li {
@@ -477,6 +482,9 @@
     -ms-flex-wrap: wrap;
         flex-wrap: wrap;
     padding: 40px 0;
+  }
+  .user-profile-container .camera_icon {
+    font-size: calc(77px / 2);
   }
   .user-profile-container .profile::after {
     display: none;
@@ -592,7 +600,7 @@
     width: auto;
     margin: 0;
   }
-  @media (max-width: 400px) {
+  @media (max-width: 500px) {
     .user-profile-container .profile {
       -ms-grid-columns: auto 1fr;
           grid-template-columns: auto 1fr;
@@ -625,10 +633,13 @@
   }
 }
 
-@media (min-width: 400px) {
+@media (min-width: 501px) {
   .user-profile-container .profile-image img {
     width: 152px;
     height: 152px;
+  }
+  .user-profile-container .camera_icon {
+    font-size: calc(152px / 2);
   }
 }
 /*# sourceMappingURL=UserProfile.css.map */

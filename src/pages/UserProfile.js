@@ -180,16 +180,15 @@ function UserProfile() {
                         htmlFor="changeImage"
                         style={{
                           position: "absolute",
-                          bottom: "30%",
-                          right: "40%",
+                          textAlign: "center",
+                          width: "100%",
                         }}
                       >
                         <i
-                          className="fa fa-camera"
+                          className="fa fa-camera camera_icon"
                           ref={cameraIconRef}
                           aria-hidden="true"
                           style={{
-                            fontSize: "4rem",
                             cursor: "pointer",
                             display: "none",
                             color: "#eee",
