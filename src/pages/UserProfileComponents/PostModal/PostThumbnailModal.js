@@ -28,8 +28,8 @@ const PostThumbnailModal = (props) => {
       </li>
     ));
     setMappedComments(tempArr);
-    setUserImage(props.userImage, props.post.engagement.comments);
-  }, [props.userImage]);
+    setUserImage(props.userImage);
+  }, [props.userImage, props.post.engagement.comments]);
   useEffect(() => {
     let localArr = props.post.engagement.comments.map((element) => (
       <li key={uuidv4()}>
