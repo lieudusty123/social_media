@@ -297,7 +297,7 @@ function UserProfile() {
 
           <main>
             <div className="container">
-              <AllPostsThumbnails user={postData} />
+              <AllPostsThumbnails user={postData} userImage={userData.image} />
               {isLoading && <div className="loader"></div>}
             </div>
           </main>

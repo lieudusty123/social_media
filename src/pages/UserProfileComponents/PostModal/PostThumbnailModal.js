@@ -1,11 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import placeHolderUserImage from "../../../files/placeholder_user_image.webp";
-import { v4 as uuidv4 } from "uuid";
-import styles from "./PostThumbnailModal_styling.module.css";
 import { createPortal } from "react-dom";
-import usersContext from "../../../context/usersContext";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import usersContext from "../../../context/usersContext";
+import styles from "./PostThumbnailModal_styling.module.css";
+import placeHolderUserImage from "../../../files/placeholder_user_image.webp";
+
+let timeOut;
 const PostThumbnailModal = (props) => {
   const [userImage, setUserImage] = useState();
   const data = useContext(usersContext);
@@ -16,7 +18,8 @@ const PostThumbnailModal = (props) => {
   const [mappedComments, setMappedComments] = useState([]);
   // map through the post's comments (with the usage of props) and returns an <li/> for each
 
-  //when the component loads gets the create profile image from sessionStorage instead of fetching it
+  const likeCounterRef = useRef();
+
   useEffect(() => {
     const tempArr = props.post.engagement.comments.map((comment) => (
       <li key={uuidv4()}>
@@ -25,7 +28,7 @@ const PostThumbnailModal = (props) => {
       </li>
     ));
     setMappedComments(tempArr);
-    setUserImage(sessionStorage.getItem("userProfileImage"));
+    setUserImage(props.userImage);
   }, []);
   useEffect(() => {
     let localArr = props.post.engagement.comments.map((element) => (
@@ -72,7 +75,35 @@ const PostThumbnailModal = (props) => {
     } else {
     }
   }
-
+  function submitLike() {
+    if (timeOut) {
+      clearTimeout(timeOut);
+    }
+    if (data.userId !== undefined) {
+      if (
+        +likeCounterRef.current.textContent ===
+        props.post.engagement.likes.length
+      ) {
+        likeCounterRef.current.textContent =
+          +likeCounterRef.current.textContent + 1;
+        timeOut = setTimeout(() => axiosLike("ADD"), 500);
+      } else {
+        likeCounterRef.current.textContent =
+          +likeCounterRef.current.textContent - 1;
+        timeOut = setTimeout(() => axiosLike("REMOVE"), 500);
+      }
+    } else {
+      alert("You need to login first");
+    }
+  }
+  function axiosLike(str) {
+    axios.post("/like-post", {
+      userId: data.userId,
+      postId: props.post._id,
+      action: str,
+    });
+  }
+  console.log(props);
   return createPortal(
     <div className={styles["post"]} id="post_thumbnail_modal_wrapper">
       <div className={styles["post_info"]}>
@@ -90,12 +121,24 @@ const PostThumbnailModal = (props) => {
           <div className={styles["section_title"]}>Description</div>
           <div className={styles["post_description"]}>{props.post.title}</div>
         </div>
+        <div
+          className={styles["section_title"]}
+          style={{
+            padding: ".5rem .5rem 0 .5rem",
+          }}
+        >
+          Likes{" ("}
+          <span ref={likeCounterRef}>{props.post.engagement.likes.length}</span>
+          {")"}
+        </div>
         <div className={styles["comment_section_container"]}>
-          <div className={styles["section_title"]}>Comments</div>
+          <div className={styles["section_title"]}>
+            Comments<span>{` (${props.post.engagement.comments.length})`}</span>
+          </div>
           <ul>{mappedComments}</ul>
           <form className={styles["post_comment"]} onSubmit={sendNewComment}>
             <input
-              placeholder="Add a comment..."
+              placeholder="Comment..."
               onChange={(e) => setCommentContent(e.target.value)}
               value={commentContent}
               ref={addCommentRef}
@@ -105,26 +148,11 @@ const PostThumbnailModal = (props) => {
         </div>
       </div>
       <div className={styles["post_body"]}>
-        <img src={props.post.files[0]} alt="uploaded post" />
-        <button className={styles["like_button"]}>
-          <img
-            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMiAyMS41OTNjLTUuNjMtNS41MzktMTEtMTAuMjk3LTExLTE0LjQwMiAwLTMuNzkxIDMuMDY4LTUuMTkxIDUuMjgxLTUuMTkxIDEuMzEyIDAgNC4xNTEuNTAxIDUuNzE5IDQuNDU3IDEuNTktMy45NjggNC40NjQtNC40NDcgNS43MjYtNC40NDcgMi41NCAwIDUuMjc0IDEuNjIxIDUuMjc0IDUuMTgxIDAgNC4wNjktNS4xMzYgOC42MjUtMTEgMTQuNDAybTUuNzI2LTIwLjU4M2MtMi4yMDMgMC00LjQ0NiAxLjA0Mi01LjcyNiAzLjIzOC0xLjI4NS0yLjIwNi0zLjUyMi0zLjI0OC01LjcxOS0zLjI0OC0zLjE4MyAwLTYuMjgxIDIuMTg3LTYuMjgxIDYuMTkxIDAgNC42NjEgNS41NzEgOS40MjkgMTIgMTUuODA5IDYuNDMtNi4zOCAxMi0xMS4xNDggMTItMTUuODA5IDAtNC4wMTEtMy4wOTUtNi4xODEtNi4yNzQtNi4xODEiLz48L3N2Zz4="
-            alt="like button"
-          />
-        </button>
-        <div className={styles["divider"]}>
-          <div className={styles["divider_line_container"]}>
-            <div className={styles["divider_line"]}></div>
-          </div>
-          <div className={styles["divider_circle"]}></div>
-          <div className={styles["divider_line_container"]}>
-            <div className={styles["divider_line"]}></div>
-          </div>
-          <span></span>
-        </div>
-      </div>
-      <div className={styles["post_footer"]}>
-        <div className={styles["post_footer_more"]}></div>
+        <img
+          src={props.post.files[0]}
+          alt="uploaded post"
+          onDoubleClick={submitLike}
+        />
       </div>
     </div>,
     document.getElementById("post_modal")

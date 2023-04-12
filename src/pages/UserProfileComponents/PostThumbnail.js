@@ -1,6 +1,31 @@
+import PostThumbnailModal from "./PostModal/PostThumbnailModal";
+import "./PostModal/PostThumbnailModal_styling.module.css";
+import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "react";
+
 const PostThumbnail = (props) => {
+  const [showModal, setShowModal] = useState(false);
+  const postModal = document.getElementById("post_modal");
+  useEffect(() => {
+    postModal.addEventListener("click", (e) => {
+      switchState(e.target);
+    });
+    function switchState(ele) {
+      if (ele.id === "post_modal") {
+        setShowModal(false);
+        postModal.classList.remove("shown");
+      }
+    }
+  }, [postModal]);
   return (
-    <div className="profile-page gallery-item">
+    <div
+      className="profile-page gallery-item"
+      tabIndex="0"
+      onClick={() => {
+        setShowModal(true);
+        postModal.classList.add("shown");
+      }}
+    >
       <img
         src={props.post.files[0]}
         className="profile-page gallery-image"
@@ -27,6 +52,13 @@ const PostThumbnail = (props) => {
           </li>
         </ul>
       </div>
+      {showModal && (
+        <PostThumbnailModal
+          userImage={props.userImage}
+          post={props.post}
+          key={uuidv4()}
+        />
+      )}
     </div>
   );
 };

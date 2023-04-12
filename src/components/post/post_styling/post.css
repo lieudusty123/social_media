@@ -114,9 +114,7 @@
 }
 
 .post .post_body .post_body_buttons_container button {
-  background-color: transparent;
   border: none;
-  height: 100%;
 }
 
 .post .post_body .post_body_buttons_container button:hover {
@@ -141,11 +139,12 @@
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
-  height: 1.5rem;
+  height: 2.5rem;
 }
 
 .post .post_body_buttons div {
   font-size: 1.2rem;
+  margin-left: 0.5rem;
 }
 
 .post .post_footer .post_comment_list {

@@ -74,12 +74,6 @@
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
-
-    // transition: 0.2s filter;
-    &:hover {
-      // transition: 0.2s filter;
-      // filter: brightness(0.75);
-    }
   }
 
   .profile-user-settings,
@@ -125,7 +119,6 @@
       font-size: 16px;
       line-height: 1.5;
       margin-right: 20px;
-      cursor: pointer;
       &:last-of-type {
         margin-right: 0;
       }
