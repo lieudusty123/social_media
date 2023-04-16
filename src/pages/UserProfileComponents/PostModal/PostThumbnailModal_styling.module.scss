@@ -2,15 +2,18 @@
   .post {
     &_info {
       overflow: auto;
-      &_header {
-        .user_image_container {
-        }
-      }
       .comment_section_container {
         ul {
           max-height: 130px;
         }
       }
+    }
+  }
+}
+@media screen and (max-width: 500px) {
+  .post {
+    &_info {
+      display: none;
     }
   }
 }
@@ -196,8 +199,16 @@
       width: 100%;
       border-radius: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.534);
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
       &:hover {
         cursor: pointer;
+      }
+      &:active {
+        width: 99%;
+        height: 99%;
       }
     }
     .like_button {

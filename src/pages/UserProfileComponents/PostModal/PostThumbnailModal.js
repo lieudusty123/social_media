@@ -21,32 +21,40 @@ const PostThumbnailModal = (props) => {
   const likeCounterRef = useRef();
 
   useEffect(() => {
-    const tempArr = props.post.engagement.comments.map((comment) => (
-      <li key={uuidv4()}>
-        <div className={styles["comment_name"]}>- {comment.userName}</div>
-        <div className={styles["comment_content"]}>{comment.content}</div>
-      </li>
-    ));
-    setMappedComments(tempArr);
-    setUserImage(props.userImage);
-  }, [props.userImage, props.post.engagement.comments]);
-  useEffect(() => {
-    let localArr = props.post.engagement.comments.map((element) => (
+    let localArr = props.post.engagement.comments.map((comment) => (
       <li key={uuidv4()}>
         <div
           className={styles["comment_name"]}
           onClick={() => {
-            navigate(`/p/${element.userId}`);
+            props.postModalRef();
+            navigate(`/p/${comment.userId}`);
           }}
         >
-          - {element.userName}
+          - {comment.userName}
         </div>
-        <div className={styles["comment_content"]}>{element.content}</div>
+        <div className={styles["comment_content"]}>{comment.content}</div>
       </li>
     ));
-    setMappedComments(() => localArr);
-  }, [props.post, navigate]);
+    setUserImage(props.userImage);
+    setMappedComments(localArr);
+  }, [props, navigate]);
+  useEffect(() => {
+    const modalEle = document.querySelector("#post_modal");
 
+    const handleClickOutside = (e) => {
+      if (e.target.id === "post_modal") {
+        props.postModalRef();
+      }
+    };
+
+    modalEle.addEventListener("click", handleClickOutside);
+
+    return () => {
+      props.postModalRef();
+      // Cleanup the event listener when the component unmounts
+      modalEle.removeEventListener("click", handleClickOutside);
+    };
+  }, [props]);
   function sendNewComment(e) {
     e.preventDefault();
     if (data.userName && commentContent.length > 0) {
@@ -55,6 +63,7 @@ const PostThumbnailModal = (props) => {
           <div
             className={styles["comment_name"]}
             onClick={() => {
+              props.postModalRef();
               navigate(`/p/${data.userId}`);
             }}
           >
@@ -103,7 +112,6 @@ const PostThumbnailModal = (props) => {
       action: str,
     });
   }
-  console.log(props);
   return createPortal(
     <div className={styles["post"]} id="post_thumbnail_modal_wrapper">
       <div className={styles["post_info"]}>

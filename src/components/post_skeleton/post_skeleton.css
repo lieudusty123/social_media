@@ -90,8 +90,8 @@
 }
 
 #post_skeleton_container .loading-post-button, #post_skeleton_container .loading-post-avatar, #post_skeleton_container .loading-post-username, #post_skeleton_container .loading-post-image, #post_skeleton_container .loading-post-likes, #post_skeleton_container .loading-post-caption, #post_skeleton_container .loading-post-comment, #post_skeleton_container .loading-post-time {
-  -webkit-animation: loading 8s linear infinite;
-          animation: loading 8s linear infinite;
+  -webkit-animation: loading 2s linear infinite;
+          animation: loading 2s linear infinite;
   background: -webkit-gradient(linear, left top, right top, color-stop(8%, #dbdbdb), color-stop(18%, #f3f3f3), color-stop(33%, #dbdbdb));
   background: linear-gradient(to right, #dbdbdb 8%, #f3f3f3 18%, #dbdbdb 33%);
   background-size: 335px 100%;
@@ -99,19 +99,19 @@
 
 @-webkit-keyframes loading {
   0% {
-    background-position: -335px 0;
+    background-position: -100% 0;
   }
   100% {
-    background-position: calc(335px + 100%) 0;
+    background-position: 100% 0;
   }
 }
 
 @keyframes loading {
   0% {
-    background-position: -335px 0;
+    background-position: -100% 0;
   }
   100% {
-    background-position: calc(335px + 100%) 0;
+    background-position: 100% 0;
   }
 }
 /*# sourceMappingURL=post_skeleton.css.map */

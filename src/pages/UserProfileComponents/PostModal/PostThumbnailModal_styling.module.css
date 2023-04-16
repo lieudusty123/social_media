@@ -7,6 +7,12 @@
   }
 }
 
+@media screen and (max-width: 500px) {
+  .post_info {
+    display: none;
+  }
+}
+
 @media screen and (min-width: 800px) {
   .post_info {
     overflow: hidden;
@@ -243,10 +249,19 @@
   border-radius: 20px;
   -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.534);
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.534);
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
 }
 
 .post_body img:hover {
   cursor: pointer;
+}
+
+.post_body img:active {
+  width: 99%;
+  height: 99%;
 }
 
 .post_body .like_button {

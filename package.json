@@ -33,6 +33,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "react": "react-scripts start",
     "dev": "nodemon server"
   },
   "eslintConfig": {

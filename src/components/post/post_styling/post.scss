@@ -8,7 +8,12 @@
   border: 1px solid lightgray;
   margin-block: 1rem;
   padding-inline: 10px;
-
+  img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+  }
   .post_header {
     grid-row: 1;
     height: 60px;
