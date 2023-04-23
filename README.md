@@ -21,15 +21,14 @@ Welcome to my Instagram Clone project. This project was created using ReactJS, N
 
 ## Getting Started
 
-To see the deployed version of this project, please click [here](insert-deployed-link-here).
+To see the deployed version of this project, please click [here](instagram.omerezra.me).
 
 To run this project on your local machine, please follow these steps:
 
 1. Clone this repository to your local machine
 2. Install dependencies with `npm install`
-3. Start the React app with `npm start`
-4. Start the server with `npm run dev`
-5. Open the project in your web browser at `http://localhost:3000`
+3. Start the server with `npm start`
+4. Open the project in your web browser at `http://localhost:5000`
 
 ## Purpose
 
