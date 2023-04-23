@@ -21,7 +21,7 @@ Welcome to my Instagram Clone project. This project was created using ReactJS, N
 
 ## Getting Started
 
-To see the deployed version of this project, please click [here](instagram.omerezra.me).
+To see the deployed version of this project, please click [here](https://instagram.omerezra.me).
 
 To run this project on your local machine, please follow these steps:
 
