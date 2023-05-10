@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import "./modal_styling/modal.css";
-import cookieImg from "../files/cookies.png";
+import cookieImg from "../../../files/cookies.png";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 function Modal() {

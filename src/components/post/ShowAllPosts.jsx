@@ -1,8 +1,8 @@
 import { Fragment, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import Post from "./post/Post";
-import usersContext from "../context/usersContext";
+import Post from "./Post";
+import usersContext from "../../context/usersContext";
 import "./post_skeleton/post_skeleton.css";
 const ShowAllPosts = () => {
   const [mappedItem, setMappedItems] = useState([]);

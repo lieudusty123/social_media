@@ -1,10 +1,11 @@
 import { useState, useContext, useRef } from "react";
 import axios from "axios";
-import usersContext from "../../context/usersContext";
+import usersContext from "../../../context/usersContext";
 import "./new_post_styling/new_post.css";
-import newPostImage from "../../files/new_post.png";
-import placeHolderPostImage from "../../files/placeholder_new_post_image.jpg";
-import defaultImage from "../../files/placeholder_user_image.webp";
+import newPostImage from "../../../files/new_post.png";
+import placeHolderPostImage from "../../../files/placeholder_new_post_image.jpg";
+import defaultImage from "../../../files/placeholder_user_image.webp";
+
 const NewPost = () => {
   const [isShown, setIsShown] = useState(false);
   const [textData, setTextData] = useState("");

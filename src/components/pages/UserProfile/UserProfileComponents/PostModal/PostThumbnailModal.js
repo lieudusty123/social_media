@@ -3,9 +3,10 @@ import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import usersContext from "../../../context/usersContext";
+
 import styles from "./PostThumbnailModal_styling.module.css";
-import placeHolderUserImage from "../../../files/placeholder_user_image.webp";
+import placeHolderUserImage from "../../../../../files/placeholder_user_image.webp";
+import usersContext from "../../../../../context/usersContext";
 
 let timeOut;
 const PostThumbnailModal = (props) => {

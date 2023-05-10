@@ -1,13 +1,17 @@
-import axios from "axios";
-import React, { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef, lazy } from "react";
 import { useParams } from "react-router-dom";
-import usersContext from "../context/usersContext";
-import defaultImage from "../files/placeholder_user_image.webp";
+
+import axios from "axios";
+
+import usersContext from "../../../context/usersContext";
 import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
-import "./UserProfile/UserProfile.css";
-import "./feed_styling/feed.css";
-import Nav from "./Nav";
-import UserNotFound from "./UserNotFound";
+
+import "./UserProfile_Styling/UserProfile.css";
+import "../Feed/feed_styling/feed.css";
+const defaultImage = lazy(() =>
+  import("../../../files/placeholder_user_image.webp")
+);
+const UserNotFound = lazy(() => import("../UserNotFound/UserNotFound"));
 function UserProfile() {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -22,6 +26,7 @@ function UserProfile() {
   const profileImage = useRef();
   const changeImageRef = useRef();
   //gets full user-profile data and display page
+  console.log("here");
   useEffect(() => {
     axios
       .post("/user-profile", {
@@ -118,7 +123,6 @@ function UserProfile() {
     <>
       {validUser && !isLoading && (
         <div className="user-profile-container" style={{ fontSize: "10px" }}>
-          <Nav />
           <header>
             <div className="container">
               <div className="profile">
@@ -305,7 +309,7 @@ function UserProfile() {
       )}
       {isLoading && (
         <div id="skeleton_wrapper">
-          <Nav />
+          {/* <Nav /> */}
           <header id="skeleton_header">
             <div id="skeleton_profile_image"></div>
             <div id="skeleton_profile_info_container">

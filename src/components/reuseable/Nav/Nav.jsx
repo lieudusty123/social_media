@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../components/reuseable/BackButton/BackButton";
 import { v4 as uuidv4 } from "uuid";
 import "./nav_styling/Nav_styling.css";
-import defaultImage from "../files/placeholder_user_image.webp";
-import usersContext from "../context/usersContext";
+import BackButton from "../BackButton/BackButton";
+import defaultImage from "../../../files/placeholder_user_image.webp";
+import usersContext from "../../../context/usersContext";
 
 let interval;
 const Nav = () => {
@@ -141,6 +141,14 @@ const Nav = () => {
           <img
             onClick={() => userOptionsRef.current.classList.toggle("shown")}
             src={data.image === "default" ? defaultImage : data.image}
+            className="user_image"
+            alt="current profile pic"
+          />
+        )}
+        {data.image === undefined && (
+          <img
+            onClick={() => userOptionsRef.current.classList.toggle("shown")}
+            src={defaultImage}
             className="user_image"
             alt="current profile pic"
           />

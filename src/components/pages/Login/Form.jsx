@@ -1,11 +1,11 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import usersContext from "../context/usersContext";
 import Cookies from "js-cookie";
 import axios from "axios";
-import Modal from "../components/Modal";
+import usersContext from "../../../context/usersContext";
+import Modal from "../../reuseable/Modal/Modal";
 import isEmail from "validator/lib/isEmail";
-import "./feed_styling/feed.css";
+import "../Feed/feed_styling/feed.css";
 import "./form_styling/form_styling.css";
 const Form = () => {
   const data = useContext(usersContext);

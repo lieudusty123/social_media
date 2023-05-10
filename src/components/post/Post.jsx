@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useRef, useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import usersContext from "../../context/usersContext";
 import { v4 as uuidv4 } from "uuid";
 import defaultImage from "../../files/placeholder_user_image.webp";
 
 import "./post_styling/post.css";
-import { useNavigate } from "react-router-dom";
 let timeOut;
 const Post = (props) => {
   const likeButton = useRef();

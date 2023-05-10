@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import "./pages/feed_styling/feed.css";
+// import "./pages/feed_styling/feed.css";
 import ContextProvider from "./context/ContextProvider";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";

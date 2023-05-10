@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import Modal from "../components/Modal";
-import BackButton from "../components/reuseable/BackButton/BackButton";
+import Modal from "../../reuseable/Modal/Modal";
+import BackButton from "../../reuseable/BackButton/BackButton";
 import styles from "./UserNotFound_Styling/UserNotFound.module.css";
 const UserNotFound = () => {
   const navigate = useNavigate();
