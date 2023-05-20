@@ -18,7 +18,6 @@ const FeedPage = () => {
   }, [data, navigate]);
   return (
     <div id="feed-page-container">
-      {/* <Nav /> */}
       <Modal />
       {data.email && <NewPost />}
       {data.email && <ShowAllPosts />}

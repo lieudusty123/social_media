@@ -8,6 +8,7 @@ import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
 
 import "./UserProfile_Styling/UserProfile.css";
 import "../Feed/feed_styling/feed.css";
+import UserProfileSkeleton from "./UserProfileSkeleton";
 const defaultImage = lazy(() =>
   import("../../../files/placeholder_user_image.webp")
 );
@@ -26,7 +27,6 @@ function UserProfile() {
   const profileImage = useRef();
   const changeImageRef = useRef();
   //gets full user-profile data and display page
-  console.log("here");
   useEffect(() => {
     axios
       .post("/user-profile", {
@@ -86,7 +86,6 @@ function UserProfile() {
               return false;
           }
         });
-        console.log("done");
       });
   }
   function setImageChange() {
@@ -113,7 +112,6 @@ function UserProfile() {
         })
         .then(() => {
           changeImageRef.current.value = null;
-          console.log("image was changed");
           setShowChangeButtons(false);
           data.changeImage(data.email, data.userId, data.userName, passedStr);
         });
@@ -307,36 +305,7 @@ function UserProfile() {
           </main>
         </div>
       )}
-      {isLoading && (
-        <div id="skeleton_wrapper">
-          {/* <Nav /> */}
-          <header id="skeleton_header">
-            <div id="skeleton_profile_image"></div>
-            <div id="skeleton_profile_info_container">
-              <div id="skeleton_profile_id"></div>
-              <div id="skeleton_profile_stats">
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-              <div id="skeleton_profile_bio">
-                <div></div>
-                <div></div>
-              </div>
-            </div>
-          </header>
-          <main id="skeleton_posts_wrapper">
-            <div id="skeleton_posts_container">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </main>
-        </div>
-      )}
+      {isLoading && <UserProfileSkeleton />}
       {!validUser && !isLoading && <UserNotFound />}
     </>
   );

@@ -24,7 +24,6 @@ const Nav = () => {
           searchedInput: data,
         })
         .then((res) => {
-          console.log(res.data);
           let tempArr = [];
           res.data.forEach((user) => {
             tempArr.push(

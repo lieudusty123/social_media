@@ -29,12 +29,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "cd ./back && node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "react": "react-scripts start",
-    "dev": "nodemon server"
+    "dev": "cd ./back && nodemon server.js"
   },
   "eslintConfig": {
     "extends": [

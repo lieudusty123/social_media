@@ -3,43 +3,26 @@
   top: 0;
   height: 100vh;
   width: 70%;
-  background: -webkit-gradient(linear, left bottom, left top, color-stop(30%, #2e3446), to(#212329));
-  background: linear-gradient(0deg, #2e3446 30%, #212329 100%);
+  background: linear-gradient(0deg, rgb(46, 52, 70) 30%, rgb(33, 35, 41) 100%);
   background-color: white;
   font-family: "Quicksand", sans-serif;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 #posts_container {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: (220px)[3];
-      grid-template-columns: repeat(3, 220px);
+  grid-template-columns: repeat(3, 220px);
 }
-
 #posts_container .posts_thumbnail {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
   margin: 1rem;
   width: 200px;
   height: 200px;
   overflow: hidden;
   border-radius: 30px;
-  -webkit-box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.267);
-          box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.267);
+  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.267);
   cursor: pointer;
-}
-/*# sourceMappingURL=style.module.css.map */
+}/*# sourceMappingURL=style.module.css.map */

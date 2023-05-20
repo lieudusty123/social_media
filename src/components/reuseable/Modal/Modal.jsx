@@ -21,11 +21,9 @@ function Modal() {
     document.getElementById("cookies_modal").style.display = "none";
     document.querySelector("body").style.overflow = "auto";
     if (e.target.innerText === "Accept") {
-      console.log("accepted");
       localStorage.setItem("cookieConsent", "true");
       Cookies.set("cookieConsent", "true");
     } else {
-      console.log("declined");
       localStorage.setItem("cookieConsent", "false");
     }
   }

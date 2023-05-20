@@ -32,7 +32,6 @@ function App() {
           id: cookies.userId,
         })
         .then((res) => {
-          console.log(res);
           data.login(cookies.email, cookies.userId, cookies.userName, res.data);
         })
         .catch((e) => {

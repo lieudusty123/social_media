@@ -1,9 +1,24 @@
+// NodeJS Imports
 const bcrypt = require("bcryptjs");
+// NodeJS Imports
+
+// Mongo Imports
 const { ObjectId } = require("./mongo");
 const { client } = require("./mongo");
 const db = client.db("socialMedia");
 const coll = db.collection("users");
 const postsColl = db.collection("posts");
+// Mongo Imports
+
+// Server Functions
+const { latestFollowingNotEngaged, followingNotEngaged, followingEngaged,
+      notFollowingLatest, notFollowing, yourLatest} = require("./serverFunctions/customFeed"); //prettier-ignore
+// Server Functions
+
+// General Functions
+const { invokeIf,unixToRelativeTime } = require("./serverFunctions/generalFunctions"); //prettier-ignore
+// General Functions
+
 async function signUp(req, res) {
   coll
     .find({ "private_details.email": req.body.email })
@@ -45,7 +60,6 @@ async function signUp(req, res) {
       }
     });
 }
-
 async function login(req, res) {
   const email = req.body.email;
   const password = req.body.password;
@@ -120,105 +134,19 @@ async function newPost(req, res) {
   );
   res.status(200).send("posted!");
 }
-
 async function allPosts(req, res) {
-  function unixToRelativeTime(unixTimestamp) {
-    const millisecondsPerSecond = 1000;
-    const secondsPerMinute = 60;
-    const minutesPerHour = 60 * secondsPerMinute;
-    const hoursPerDay = 24 * minutesPerHour;
-    const daysPerWeek = 7 * hoursPerDay;
-    const weeksPerMonth = 4 * daysPerWeek;
-    const monthsPerYear = 12 * weeksPerMonth;
-
-    const currentTime = Math.round(
-      new Date().getTime() / millisecondsPerSecond
-    );
-    const timeDifference = currentTime - unixTimestamp;
-
-    if (timeDifference < secondsPerMinute) {
-      return `${timeDifference} seconds ago`;
-    } else if (timeDifference < minutesPerHour) {
-      const minutes = Math.floor(timeDifference / secondsPerMinute);
-      return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
-    } else if (timeDifference < hoursPerDay) {
-      const hours = Math.floor(timeDifference / minutesPerHour);
-      return `${hours} hour${hours === 1 ? "" : "s"} ago`;
-    } else if (timeDifference < daysPerWeek) {
-      const days = Math.floor(timeDifference / hoursPerDay);
-      return `${days} day${days === 1 ? "" : "s"} ago`;
-    } else if (timeDifference < weeksPerMonth) {
-      const weeks = Math.floor(timeDifference / daysPerWeek);
-      return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
-    } else if (timeDifference < monthsPerYear) {
-      const months = Math.floor(timeDifference / weeksPerMonth);
-      return `${months} month${months === 1 ? "" : "s"} ago`;
-    } else {
-      const years = Math.floor(timeDifference / monthsPerYear);
-      return `${years} year${years === 1 ? "" : "s"} ago`;
-    }
-  }
-
   try {
     async function getUserPosts() {
       const user = await coll.findOne({ uuid: req.body.currentUser });
       let resArr = [];
-      let index = 0;
+      let postHardLimit = 20 - resArr.length;
+      resArr.push(...(await invokeIf(yourLatest,[user, postHardLimit],postHardLimit))); // prettier-ignore
+      resArr.push(...(await invokeIf(latestFollowingNotEngaged,[user, postHardLimit],postHardLimit))); // prettier-ignore
+      resArr.push(...(await invokeIf(followingNotEngaged,[user, postHardLimit],postHardLimit))); // prettier-ignore
+      resArr.push(...(await invokeIf(followingEngaged,[user, postHardLimit],postHardLimit))); // prettier-ignore
+      resArr.push(...(await invokeIf(notFollowingLatest,[user, postHardLimit], postHardLimit))); // prettier-ignore
+      resArr.push(...(await invokeIf(notFollowing, [user, postHardLimit], postHardLimit))); // prettier-ignore
 
-      while (resArr.length < 20 && index < 5) {
-        let res = await switchPostMethod(index);
-        res.length > 0 && resArr.push(...res);
-        index++;
-      }
-      async function switchPostMethod(i) {
-        switch (i) {
-          case 0:
-            return await postsColl
-              .find({
-                "userName.uuid": { $in: user.following },
-                _id: { $nin: user.postsEngagement },
-                date: { $gt: user.lastLogin },
-              })
-              .limit(20 - resArr.length)
-              .toArray();
-          case 1:
-            return await postsColl
-              .find({
-                "userName.uuid": { $in: user.following },
-                _id: { $in: user.postsEngagement },
-                date: { $lte: user.lastLogin },
-              })
-              .limit(20 - resArr.length)
-              .toArray();
-          case 2:
-            return await postsColl
-              .find({
-                "userName.uuid": { $in: user.following },
-                _id: { $nin: user.postsEngagement },
-                date: { $lte: user.lastLogin },
-              })
-              .limit(20 - resArr.length)
-              .toArray();
-          case 3:
-            return await postsColl
-              .find({
-                "userName.uuid": { $nin: user.following },
-                date: { $gt: user.lastLogin },
-              })
-              .limit(20 - resArr.length)
-              .toArray();
-          case 4:
-            return await postsColl
-              .find({
-                "userName.uuid": { $nin: user.following },
-                date: { $lt: user.lastLogin },
-              })
-              .limit(20 - resArr.length)
-              .toArray();
-          default:
-            break;
-        }
-      }
       let storedUsers = [];
       let storedImages = [];
 
@@ -246,7 +174,6 @@ async function allPosts(req, res) {
     res.status(404).send(err);
   }
 }
-
 async function getUserImage(req, res) {
   coll
     .find({ uuid: req.body.id })
@@ -259,7 +186,6 @@ async function getUserImage(req, res) {
       }
     });
 }
-
 async function follow(req, res) {
   coll
     .find({ uuid: req.body.targetUuid })
@@ -300,16 +226,20 @@ async function follow(req, res) {
       }
     });
 }
-
 async function likePost(req, res) {
-  postsColl
-    .find({ _id: new ObjectId(req.body.postId) })
-    .toArray()
-    .then((data) => {
-      checkLikedAndUpdate(data);
-    });
+  try {
+    postsColl
+      .find({ _id: new ObjectId(req.body.postId) })
+      .toArray()
+      .then((data) => {
+        checkLikedAndCallUpdate(data);
+      });
+  } catch (err) {
+    res.status(404).send(err);
+    return;
+  }
 
-  function checkLikedAndUpdate(data) {
+  function checkLikedAndCallUpdate(data) {
     if (
       data[0].engagement.likes.includes(req.body.userId) &&
       req.body.action === "REMOVE"
@@ -354,12 +284,16 @@ async function likePost(req, res) {
   }
 }
 async function addComment(req, res) {
-  postsColl
-    .find({ _id: new ObjectId(req.body.postId) })
-    .toArray()
-    .then(() => {
-      addCommentToDB();
-    });
+  try {
+    postsColl
+      .find({ _id: new ObjectId(req.body.postId) })
+      .toArray()
+      .then(() => {
+        addCommentToDB();
+      });
+  } catch (err) {
+    res.status(404).send(err);
+  }
 
   function addCommentToDB() {
     postsColl
@@ -384,13 +318,13 @@ async function addComment(req, res) {
       .catch((err) => res.status(404).send(err));
   }
 }
-
 async function changeIcon(req, res) {
-  coll
-    .find({ uuid: req.body.userId })
-    .toArray()
-    .then((user) => {
-      if (user.length === 1) {
+  try {
+    coll
+      .find({ uuid: req.body.userId })
+      .toArray()
+      .then((user) => {
+        if (user.length === 0) return;
         coll.updateOne(
           { uuid: req.body.userId },
           {
@@ -399,39 +333,31 @@ async function changeIcon(req, res) {
             },
           }
         );
-      }
-    });
-  res.status(200).send("Image was changed!");
+      });
+    res.status(200).send("Image was changed!");
+  } catch (err) {
+    res.status(404).send(err);
+  }
 }
-
 async function userProfile(req, res) {
-  let response = {
-    userData: {},
-    posts: [],
-  };
   try {
     coll
       .find({ uuid: req.body.id })
       .toArray()
       .then((user) => {
-        if (user.length !== 0) {
-          response.userData = user;
-          postsColl
-            .find({ "userName.uuid": req.body.id })
-            .toArray()
-            .then((postArr) => {
-              response.posts = postArr;
-              res.status(200).send(response);
-            });
-        } else {
-          res.status(404).send("user not found");
-        }
+        if (user.length === 0) return res.status(404).send("user not found");
+        postsColl
+          .find({ "userName.uuid": req.body.id })
+          .sort({ date: -1 })
+          .toArray()
+          .then((postArr) => {
+            res.status(200).send({ userData: user, posts: postArr });
+          });
       });
-  } catch (e) {
-    res.status(404).send();
+  } catch (err) {
+    res.status(404).send(err);
   }
 }
-
 async function search(req, res) {
   try {
     coll
@@ -444,17 +370,6 @@ async function search(req, res) {
     res.status(404).send(err);
   }
 }
-module.exports = {
-  signUp,
-  login,
-  updateUserTime,
-  newPost,
-  allPosts,
-  getUserImage,
-  follow,
-  likePost,
-  addComment,
-  changeIcon,
-  userProfile,
-  search,
-};
+
+module.exports = {signUp, login, updateUserTime, newPost, allPosts, getUserImage,
+                  follow, likePost, addComment, changeIcon, userProfile, search}; //prettier-ignore

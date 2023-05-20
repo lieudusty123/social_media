@@ -4,48 +4,31 @@
   background-color: rgba(0, 0, 0, 0.637);
   position: absolute;
   bottom: 0;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
   z-index: 10000;
   display: none;
 }
 
 #cookie_consent_container {
   width: 300px;
-  height: -webkit-max-content;
   height: -moz-max-content;
   height: max-content;
   position: fixed;
   background-color: white;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 2rem;
   color: black;
-  -webkit-box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.349);
-          box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.349);
+  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.349);
   border-radius: 30px;
   text-align: center;
 }
-
 #cookie_consent_container h1 {
   margin-block: 1rem 0;
 }
-
 #cookie_consent_container button {
   height: 3rem;
   width: 6rem;
@@ -53,48 +36,36 @@
   margin-block: 0.5rem;
   border: none;
 }
-
 #cookie_consent_container button:hover {
   cursor: pointer;
 }
-
 #cookie_consent_container button#accept {
-  background-color: #daa24f;
+  background-color: rgb(218, 162, 79);
   color: black;
   border: 2px solid black;
-  -webkit-transition: background-color 0.2s, color 0.2s;
   transition: background-color 0.2s, color 0.2s;
 }
-
 #cookie_consent_container button#accept:hover {
-  -webkit-transition: background-color 0.2s, color 0.2s;
   transition: background-color 0.2s, color 0.2s;
   background-color: black;
   color: white;
 }
-
 #cookie_consent_container button#decline {
   background-color: white;
   color: black;
   border: 2px solid black;
-  -webkit-transition: background-color 0.2s, color 0.2s;
   transition: background-color 0.2s, color 0.2s;
 }
-
 #cookie_consent_container button#decline:hover {
-  -webkit-transition: background-color 0.2s, color 0.2s;
   transition: background-color 0.2s, color 0.2s;
   background-color: black;
   color: white;
   border: none;
 }
-
 #cookie_consent_container img {
   max-width: 40%;
   max-height: 40%;
 }
-
 #cookie_consent_container div {
   padding-block: 1rem;
-}
-/*# sourceMappingURL=modal.css.map */
+}/*# sourceMappingURL=modal.css.map */

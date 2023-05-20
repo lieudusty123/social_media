@@ -2,32 +2,19 @@
   margin-block: 1rem;
   width: 335px;
   height: 553px;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   margin-bottom: 16px;
   padding: 16px;
   border: 1px solid #dbdbdb;
   border-radius: 15px;
 }
-
 #post_skeleton_container .loading-post-header {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  align-items: center;
+  justify-content: flex-start;
   margin-bottom: 16px;
 }
-
 #post_skeleton_container .loading-post-header-avatar {
   width: 3rem;
   height: 3rem;
@@ -35,13 +22,11 @@
   background-color: #dbdbdb;
   margin-right: 12px;
 }
-
 #post_skeleton_container .loading-post-header-username {
   height: 16px;
   width: 100px;
   background-color: #dbdbdb;
 }
-
 #post_skeleton_container .loading-post-image {
   height: 0;
   border-radius: 15px;
@@ -49,38 +34,32 @@
   background-color: #dbdbdb;
   margin-bottom: 16px;
 }
-
 #post_skeleton_container .loading-post-likes {
   height: 16px;
   width: 40%;
   background-color: #dbdbdb;
   margin-bottom: 8px;
 }
-
 #post_skeleton_container .loading-post-caption {
   height: 16px;
   width: 60%;
   background-color: #dbdbdb;
   margin-bottom: 8px;
 }
-
 #post_skeleton_container .loading-post-comments {
   margin-bottom: 8px;
 }
-
 #post_skeleton_container .loading-post-comments-comment {
   height: 16px;
   width: 100%;
   background-color: #dbdbdb;
   margin-bottom: 4px;
 }
-
 #post_skeleton_container .loading-post-time {
   height: 16px;
   width: 40%;
   background-color: #dbdbdb;
 }
-
 #post_skeleton_container .loading-post-button {
   height: 32px;
   width: 100%;
@@ -88,30 +67,16 @@
   border-radius: 15px;
   background-color: #dbdbdb;
 }
-
-#post_skeleton_container .loading-post-button, #post_skeleton_container .loading-post-avatar, #post_skeleton_container .loading-post-username, #post_skeleton_container .loading-post-image, #post_skeleton_container .loading-post-likes, #post_skeleton_container .loading-post-caption, #post_skeleton_container .loading-post-comment, #post_skeleton_container .loading-post-time {
-  -webkit-animation: loading 2s linear infinite;
-          animation: loading 2s linear infinite;
-  background: -webkit-gradient(linear, left top, right top, color-stop(8%, #dbdbdb), color-stop(18%, #f3f3f3), color-stop(33%, #dbdbdb));
+#post_skeleton_container .loading-post-button, #post_skeleton_container .loading-post-header-avatar, #post_skeleton_container .loading-post-header-username, #post_skeleton_container .loading-post-image, #post_skeleton_container .loading-post-likes, #post_skeleton_container .loading-post-caption, #post_skeleton_container .loading-post-comment, #post_skeleton_container .loading-post-time {
+  animation: loading 8s linear infinite;
   background: linear-gradient(to right, #dbdbdb 8%, #f3f3f3 18%, #dbdbdb 33%);
   background-size: 335px 100%;
 }
-
-@-webkit-keyframes loading {
-  0% {
-    background-position: -100% 0;
-  }
-  100% {
-    background-position: 100% 0;
-  }
-}
-
 @keyframes loading {
   0% {
-    background-position: -100% 0;
+    background-position: -335px 0;
   }
   100% {
-    background-position: 100% 0;
+    background-position: calc(335px + 100%) 0;
   }
-}
-/*# sourceMappingURL=post_skeleton.css.map */
+}/*# sourceMappingURL=post_skeleton.css.map */

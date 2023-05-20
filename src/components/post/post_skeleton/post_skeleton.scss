@@ -82,14 +82,14 @@
     }
 
     &-button,
-    &-avatar,
-    &-username,
+    &-header-avatar,
+    &-header-username,
     &-image,
     &-likes,
     &-caption,
     &-comment,
     &-time {
-      animation: loading 2s linear infinite;
+      animation: loading 8s linear infinite;
       background: linear-gradient(
         to right,
         #dbdbdb 8%,
@@ -102,10 +102,10 @@
 
   @keyframes loading {
     0% {
-      background-position: -100% 0;
+      background-position: -$loading-post-width 0;
     }
     100% {
-      background-position: 100% 0;
+      background-position: calc(#{$loading-post-width} + 100%) 0;
     }
   }
 }
