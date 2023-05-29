@@ -6,8 +6,8 @@ const bcrypt = require("bcryptjs");
 const { ObjectId } = require("./mongo");
 const { client } = require("./mongo");
 const db = client.db("socialMedia");
-const coll = db.collection("users");
-const postsColl = db.collection("posts");
+const userDB = db.collection("users");
+const postsDB = db.collection("posts");
 // Mongo Imports
 
 // Server Functions
@@ -16,65 +16,44 @@ const { latestFollowingNotEngaged, followingNotEngaged, followingEngaged,
 // Server Functions
 
 // General Functions
-const { invokeIf,unixToRelativeTime } = require("./serverFunctions/generalFunctions"); //prettier-ignore
+const { invokeIf, unixToRelativeTime } = require("./serverFunctions/generalFunctions");
+const { isEmailAvailable, isUuidAvailable } = require("./serverFunctions/mongoSpecifics");
+const { User } = require("./serverFunctions/classes");
 // General Functions
 
 async function signUp(req, res) {
-  coll
-    .find({ "private_details.email": req.body.email })
-    .toArray()
-    .then((emailTaken) => {
-      if (emailTaken.length === 0) {
-        coll
-          .find({ uuid: req.body.id })
-          .toArray()
-          .then((data) => {
-            if (data.length === 0) {
-              let returnObj = {};
-              bcrypt.genSalt(12).then((salt) => {
-                bcrypt.hash(req.body.password, salt).then((hash) => {
-                  returnObj = {
-                    name: req.body.name,
-                    uuid: req.body.id,
-                    image: req.body.image,
-                    private_details: {
-                      email: req.body.email,
-                      password: hash,
-                    },
-                    lastLogin: Math.floor(new Date().getTime() / 1000),
-                    followers: [],
-                    following: [],
-                    posts: [],
-                    postsEngagement: [],
-                  };
-                  coll.insertOne(returnObj);
-                  res.status(200).send(returnObj);
-                });
-              });
-            } else {
-              res.status(404).send("This ID is already in use!");
-            }
-          });
-      } else {
-        res.status(409).send("This email is already in use!");
-      }
+  const checkEmailAvailability = await isEmailAvailable(req.body.email);
+  if (!checkEmailAvailability) return res.status(409).send("Email is already registered");
+  const checkUuidAvailability = await isUuidAvailable(req.body.id);
+  if (!checkUuidAvailability) return res.status(409).send("This ID is already in use!");
+
+  const hashPasswordAndFinishRegister = async (pass, saltAmount) => {
+    return await bcrypt.genSalt(saltAmount).then((salt) => {
+      bcrypt.hash(pass, salt).then((hash) => {
+        let userSchem = new User(req.body.name, req.body.id, req.body.image, req.body.email, hash);
+        console.log(userSchem);
+        userDB
+          .insertOne(userSchem)
+          .then(() => {
+            res.status(200).send(userSchem);
+          })
+          .catch((err) => res.status(404).send(err));
+      });
     });
+  };
+  hashPasswordAndFinishRegister(req.body.password, 12);
 }
+
 async function login(req, res) {
   const email = req.body.email;
   const password = req.body.password;
   let returnVal = {};
-  let mongoCall = await coll
-    .find({ "private_details.email": email }, { "private_details.password": 1 })
-    .toArray();
+  let mongoCall = await userDB.find({ "private_details.email": email }, { "private_details.password": 1 }).toArray();
   if (mongoCall.length !== 1) {
     returnVal = "User not found";
     res.status(404).send(returnVal);
   } else {
-    let compare = await bcrypt.compare(
-      password,
-      mongoCall[0].private_details.password
-    );
+    let compare = await bcrypt.compare(password, mongoCall[0].private_details.password);
     if (compare === true) {
       returnVal = {
         res: "connected",
@@ -91,11 +70,8 @@ async function login(req, res) {
   }
 }
 async function updateUserTime(req, res) {
-  coll
-    .findOneAndUpdate(
-      { uuid: req.body.user },
-      { $set: { lastLogin: Math.round(new Date().getTime() / 1000) } }
-    )
+  userDB
+    .findOneAndUpdate({ uuid: req.body.user }, { $set: { lastLogin: Math.round(new Date().getTime() / 1000) } })
     .then(() => {
       res.status(200);
     })
@@ -108,9 +84,7 @@ async function newPost(req, res) {
     return Math.round(new Date().getTime() / 1000);
   }
   let date = currentTimeToUnix();
-  let userName = await coll
-    .find({ uuid: req.body.userId }, { name: 1 })
-    .toArray();
+  let userName = await userDB.find({ uuid: req.body.userId }, { name: 1 }).toArray();
   let obj = {
     files: [req.body.image],
     userName: {
@@ -124,20 +98,15 @@ async function newPost(req, res) {
       comments: [],
     },
   };
-  await postsColl.insertOne(obj);
-  let newPostID = await postsColl
-    .find({ "userName.uuid": req.body.userId, date: date }, { _id: 1 })
-    .toArray();
-  await coll.updateOne(
-    { uuid: req.body.userId },
-    { $push: { posts: newPostID[0]._id } }
-  );
+  await postsDB.insertOne(obj);
+  let newPostID = await postsDB.find({ "userName.uuid": req.body.userId, date: date }, { _id: 1 }).toArray();
+  await userDB.updateOne({ uuid: req.body.userId }, { $push: { posts: newPostID[0]._id } });
   res.status(200).send("posted!");
 }
 async function allPosts(req, res) {
   try {
     async function getUserPosts() {
-      const user = await coll.findOne({ uuid: req.body.currentUser });
+      const user = await userDB.findOne({ uuid: req.body.currentUser });
       let resArr = [];
       let postHardLimit = 20 - resArr.length;
       resArr.push(...(await invokeIf(yourLatest,[user, postHardLimit],postHardLimit))); // prettier-ignore
@@ -153,10 +122,9 @@ async function allPosts(req, res) {
       for (let i = 0; i < resArr.length; i++) {
         resArr[i].date = unixToRelativeTime(resArr[i].date);
         if (storedUsers.indexOf(resArr[i].userName.name) !== -1) {
-          resArr[i].userName.image =
-            storedImages[storedUsers.indexOf(resArr[i].userName.name)];
+          resArr[i].userName.image = storedImages[storedUsers.indexOf(resArr[i].userName.name)];
         } else {
-          await coll
+          await userDB
             .find({ uuid: resArr[i].userName.uuid }, { image: 1 })
             .toArray()
             .then((imageRes) => {
@@ -175,7 +143,7 @@ async function allPosts(req, res) {
   }
 }
 async function getUserImage(req, res) {
-  coll
+  userDB
     .find({ uuid: req.body.id })
     .toArray()
     .then((arr) => {
@@ -187,48 +155,28 @@ async function getUserImage(req, res) {
     });
 }
 async function follow(req, res) {
-  coll
+  userDB
     .find({ uuid: req.body.targetUuid })
     .toArray()
     .then((targetUser) => {
       if (targetUser[0].followers.indexOf(req.body.currentUuid) !== -1) {
-        coll
-          .updateOne(
-            { uuid: req.body.targetUuid },
-            { $pull: { followers: req.body.currentUuid } }
-          )
-          .then(() => {
-            coll
-              .updateOne(
-                { uuid: req.body.currentUuid },
-                { $pull: { following: req.body.targetUuid } }
-              )
-              .then(() => {
-                res.status(200).send("Remove Follower");
-              });
+        userDB.updateOne({ uuid: req.body.targetUuid }, { $pull: { followers: req.body.currentUuid } }).then(() => {
+          userDB.updateOne({ uuid: req.body.currentUuid }, { $pull: { following: req.body.targetUuid } }).then(() => {
+            res.status(200).send("Remove Follower");
           });
+        });
       } else {
-        coll
-          .updateOne(
-            { uuid: req.body.targetUuid },
-            { $push: { followers: req.body.currentUuid } }
-          )
-          .then(() => {
-            coll
-              .updateOne(
-                { uuid: req.body.currentUuid },
-                { $push: { following: req.body.targetUuid } }
-              )
-              .then(() => {
-                res.status(200).send("Add Follower");
-              });
+        userDB.updateOne({ uuid: req.body.targetUuid }, { $push: { followers: req.body.currentUuid } }).then(() => {
+          userDB.updateOne({ uuid: req.body.currentUuid }, { $push: { following: req.body.targetUuid } }).then(() => {
+            res.status(200).send("Add Follower");
           });
+        });
       }
     });
 }
 async function likePost(req, res) {
   try {
-    postsColl
+    postsDB
       .find({ _id: new ObjectId(req.body.postId) })
       .toArray()
       .then((data) => {
@@ -240,44 +188,29 @@ async function likePost(req, res) {
   }
 
   function checkLikedAndCallUpdate(data) {
-    if (
-      data[0].engagement.likes.includes(req.body.userId) &&
-      req.body.action === "REMOVE"
-    ) {
+    if (data[0].engagement.likes.includes(req.body.userId) && req.body.action === "REMOVE") {
       updateDB(req.body.action);
-    } else if (
-      !data[0].engagement.likes.includes(req.body.userId) &&
-      req.body.action === "ADD"
-    ) {
+    } else if (!data[0].engagement.likes.includes(req.body.userId) && req.body.action === "ADD") {
       updateDB(req.body.action);
     }
   }
 
   function updateDB(action) {
     if (action === "ADD") {
-      postsColl
-        .updateOne(
-          { _id: new ObjectId(req.body.postId) },
-          { $push: { "engagement.likes": req.body.userId } }
-        )
+      postsDB
+        .updateOne({ _id: new ObjectId(req.body.postId) }, { $push: { "engagement.likes": req.body.userId } })
         .then(() => {
-          coll.updateOne(
+          userDB.updateOne(
             { uuid: req.body.userId },
             { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } }
           );
         })
         .catch((err) => res.status(404).send(err));
     } else if (action === "REMOVE") {
-      postsColl
-        .updateOne(
-          { _id: new ObjectId(req.body.postId) },
-          { $pull: { "engagement.likes": req.body.userId } }
-        )
+      postsDB
+        .updateOne({ _id: new ObjectId(req.body.postId) }, { $pull: { "engagement.likes": req.body.userId } })
         .then(() => {
-          coll.updateOne(
-            { uuid: req.body.userId },
-            { $pull: { postsEngagement: new ObjectId(req.body.postId) } }
-          );
+          userDB.updateOne({ uuid: req.body.userId }, { $pull: { postsEngagement: new ObjectId(req.body.postId) } });
         })
         .catch((err) => res.status(404).send(err));
     } else return;
@@ -285,7 +218,7 @@ async function likePost(req, res) {
 }
 async function addComment(req, res) {
   try {
-    postsColl
+    postsDB
       .find({ _id: new ObjectId(req.body.postId) })
       .toArray()
       .then(() => {
@@ -296,7 +229,7 @@ async function addComment(req, res) {
   }
 
   function addCommentToDB() {
-    postsColl
+    postsDB
       .updateOne(
         { _id: new ObjectId(req.body.postId) },
         {
@@ -310,22 +243,19 @@ async function addComment(req, res) {
         }
       )
       .then(() => {
-        coll.updateOne(
-          { uuid: req.body.userId },
-          { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } }
-        );
+        userDB.updateOne({ uuid: req.body.userId }, { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } });
       })
       .catch((err) => res.status(404).send(err));
   }
 }
 async function changeIcon(req, res) {
   try {
-    coll
+    userDB
       .find({ uuid: req.body.userId })
       .toArray()
       .then((user) => {
         if (user.length === 0) return;
-        coll.updateOne(
+        userDB.updateOne(
           { uuid: req.body.userId },
           {
             $set: {
@@ -341,12 +271,12 @@ async function changeIcon(req, res) {
 }
 async function userProfile(req, res) {
   try {
-    coll
+    userDB
       .find({ uuid: req.body.id })
       .toArray()
       .then((user) => {
         if (user.length === 0) return res.status(404).send("user not found");
-        postsColl
+        postsDB
           .find({ "userName.uuid": req.body.id })
           .sort({ date: -1 })
           .toArray()
@@ -360,7 +290,7 @@ async function userProfile(req, res) {
 }
 async function search(req, res) {
   try {
-    coll
+    userDB
       .find({ name: { $regex: req.body.searchedInput } })
       .sort({ followers: -1 })
       .limit(5)

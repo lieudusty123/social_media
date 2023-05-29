@@ -1,9 +1,9 @@
 const { client } = require("../mongo");
 const db = client.db("socialMedia");
-const postsColl = db.collection("posts");
+const postsDB = db.collection("posts");
 
 async function yourLatest(user, resArr) {
-  return await postsColl
+  return await postsDB
     .find({
       "userName.uuid": user.uuid,
       date: { $gte: new Date().getTime() / 1000 - 3600 },
@@ -12,7 +12,7 @@ async function yourLatest(user, resArr) {
     .toArray();
 }
 async function latestFollowingNotEngaged(user, resArr) {
-  return await postsColl
+  return await postsDB
     .find({
       "userName.uuid": { $in: user.following },
       _id: { $nin: user.postsEngagement },
@@ -22,7 +22,7 @@ async function latestFollowingNotEngaged(user, resArr) {
     .toArray();
 }
 async function followingEngaged(user, resArr) {
-  return await postsColl
+  return await postsDB
     .find({
       "userName.uuid": { $in: user.following },
       _id: { $in: user.postsEngagement },
@@ -32,7 +32,7 @@ async function followingEngaged(user, resArr) {
     .toArray();
 }
 async function followingNotEngaged(user, resArr) {
-  return await postsColl
+  return await postsDB
     .find({
       "userName.uuid": { $in: user.following },
       _id: { $nin: user.postsEngagement },
@@ -42,7 +42,7 @@ async function followingNotEngaged(user, resArr) {
     .toArray();
 }
 async function notFollowingLatest(user, resArr) {
-  return await postsColl
+  return await postsDB
     .find({
       "userName.uuid": { $nin: user.following },
       date: { $gt: user.lastLogin },
@@ -51,7 +51,7 @@ async function notFollowingLatest(user, resArr) {
     .toArray();
 }
 async function notFollowing(user, resArr) {
-  return await postsColl
+  return await postsDB
     .find({
       "userName.uuid": { $nin: user.following },
       date: { $lt: user.lastLogin },
