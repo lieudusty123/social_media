@@ -16,7 +16,7 @@ const { latestFollowingNotEngaged, followingNotEngaged, followingEngaged,
 // Server Functions
 
 // General Functions
-const { invokeIf, unixToRelativeTime } = require("./serverFunctions/generalFunctions");
+const { invokeIf, unixToRelativeTime, currentTimeToUnix } = require("./serverFunctions/generalFunctions");
 const { isEmailAvailable, isUuidAvailable } = require("./serverFunctions/mongoSpecifics");
 const { User } = require("./serverFunctions/classes");
 // General Functions
@@ -47,27 +47,23 @@ async function signUp(req, res) {
 async function login(req, res) {
   const email = req.body.email;
   const password = req.body.password;
-  let returnVal = {};
-  let mongoCall = await userDB.find({ "private_details.email": email }, { "private_details.password": 1 }).toArray();
-  if (mongoCall.length !== 1) {
-    returnVal = "User not found";
-    res.status(404).send(returnVal);
-  } else {
-    let compare = await bcrypt.compare(password, mongoCall[0].private_details.password);
-    if (compare === true) {
-      returnVal = {
-        res: "connected",
-        email: mongoCall[0].private_details.email,
-        userId: mongoCall[0].uuid,
-        userName: mongoCall[0].name,
-        image: mongoCall[0].image,
-      };
-      res.status(200).send(returnVal);
-    } else {
-      returnVal = "Incorrect password";
-      res.status(404).send(returnVal);
-    }
-  }
+
+  let mongoCall = await userDB
+    .findOne({ "private_details.email": email }, { "private_details.password": 1 })
+    .catch((err) => res.status(404).send(err));
+
+  if (mongoCall === null) return res.status(404).send("User not found");
+  let hashMatch = await bcrypt.compare(password, mongoCall.private_details.password);
+  if (!hashMatch) return res.status(404).send("Incorrect password");
+
+  let returnVal = {
+    res: "connected",
+    email: mongoCall.private_details.email,
+    userId: mongoCall.uuid,
+    userName: mongoCall.name,
+    image: mongoCall.image,
+  };
+  res.status(200).send(returnVal);
 }
 async function updateUserTime(req, res) {
   userDB
@@ -79,28 +75,26 @@ async function updateUserTime(req, res) {
       res.status(404).send(err);
     });
 }
+
 async function newPost(req, res) {
-  function currentTimeToUnix() {
-    return Math.round(new Date().getTime() / 1000);
-  }
-  let date = currentTimeToUnix();
-  let userName = await userDB.find({ uuid: req.body.userId }, { name: 1 }).toArray();
-  let obj = {
+  let currentUnixTime = currentTimeToUnix();
+  let userName = await userDB.findOne({ uuid: req.body.userId }, { name: 1 }).catch((err) => res.status(404).send(err));
+
+  let newPost = {
     files: [req.body.image],
     userName: {
       uuid: req.body.userId,
-      name: userName[0].name,
+      name: userName.name,
     },
     title: req.body.title,
-    date: date,
+    date: currentUnixTime,
     engagement: {
       likes: [],
       comments: [],
     },
   };
-  await postsDB.insertOne(obj);
-  let newPostID = await postsDB.find({ "userName.uuid": req.body.userId, date: date }, { _id: 1 }).toArray();
-  await userDB.updateOne({ uuid: req.body.userId }, { $push: { posts: newPostID[0]._id } });
+  let addPostToDB = await postsDB.insertOne(newPost);
+  await userDB.updateOne({ uuid: req.body.userId }, { $push: { posts: addPostToDB.insertedId } });
   res.status(200).send("posted!");
 }
 async function allPosts(req, res) {
@@ -109,12 +103,12 @@ async function allPosts(req, res) {
       const user = await userDB.findOne({ uuid: req.body.currentUser });
       let resArr = [];
       let postHardLimit = 20 - resArr.length;
-      resArr.push(...(await invokeIf(yourLatest,[user, postHardLimit],postHardLimit))); // prettier-ignore
-      resArr.push(...(await invokeIf(latestFollowingNotEngaged,[user, postHardLimit],postHardLimit))); // prettier-ignore
-      resArr.push(...(await invokeIf(followingNotEngaged,[user, postHardLimit],postHardLimit))); // prettier-ignore
-      resArr.push(...(await invokeIf(followingEngaged,[user, postHardLimit],postHardLimit))); // prettier-ignore
-      resArr.push(...(await invokeIf(notFollowingLatest,[user, postHardLimit], postHardLimit))); // prettier-ignore
-      resArr.push(...(await invokeIf(notFollowing, [user, postHardLimit], postHardLimit))); // prettier-ignore
+      resArr.push(...(await invokeIf(yourLatest, [user, postHardLimit], postHardLimit)));
+      resArr.push(...(await invokeIf(latestFollowingNotEngaged, [user, postHardLimit], postHardLimit)));
+      resArr.push(...(await invokeIf(followingNotEngaged, [user, postHardLimit], postHardLimit)));
+      resArr.push(...(await invokeIf(followingEngaged, [user, postHardLimit], postHardLimit)));
+      resArr.push(...(await invokeIf(notFollowingLatest, [user, postHardLimit], postHardLimit)));
+      resArr.push(...(await invokeIf(notFollowing, [user, postHardLimit], postHardLimit)));
 
       let storedUsers = [];
       let storedImages = [];
@@ -124,73 +118,64 @@ async function allPosts(req, res) {
         if (storedUsers.indexOf(resArr[i].userName.name) !== -1) {
           resArr[i].userName.image = storedImages[storedUsers.indexOf(resArr[i].userName.name)];
         } else {
-          await userDB
-            .find({ uuid: resArr[i].userName.uuid }, { image: 1 })
-            .toArray()
-            .then((imageRes) => {
-              storedUsers.push(resArr[i].userName.name);
-              storedImages.push(imageRes[0].image);
-              resArr[i].userName.image = imageRes[0].image;
-            });
+          await userDB.findOne({ uuid: resArr[i].userName.uuid }, { image: 1 }).then((imageRes) => {
+            storedUsers.push(resArr[i].userName.name);
+            storedImages.push(imageRes.image);
+            resArr[i].userName.image = imageRes.image;
+          });
         }
       }
       res.status(200).send(resArr);
     }
-
     getUserPosts();
   } catch (err) {
     res.status(404).send(err);
   }
 }
 async function getUserImage(req, res) {
-  userDB
-    .find({ uuid: req.body.id })
-    .toArray()
-    .then((arr) => {
-      if (arr.length !== 0) {
-        res.status(200).send(arr[0].image);
-      } else {
-        res.status(404).send("user not found");
-      }
-    });
+  userDB.findOne({ uuid: req.body.id }).then((data) => {
+    if (data !== null) {
+      res.status(200).send(data.image);
+    } else {
+      res.status(404).send("User not found");
+    }
+  });
 }
 async function follow(req, res) {
-  userDB
-    .find({ uuid: req.body.targetUuid })
-    .toArray()
-    .then((targetUser) => {
-      if (targetUser[0].followers.indexOf(req.body.currentUuid) !== -1) {
-        userDB.updateOne({ uuid: req.body.targetUuid }, { $pull: { followers: req.body.currentUuid } }).then(() => {
-          userDB.updateOne({ uuid: req.body.currentUuid }, { $pull: { following: req.body.targetUuid } }).then(() => {
-            res.status(200).send("Remove Follower");
-          });
-        });
-      } else {
-        userDB.updateOne({ uuid: req.body.targetUuid }, { $push: { followers: req.body.currentUuid } }).then(() => {
-          userDB.updateOne({ uuid: req.body.currentUuid }, { $push: { following: req.body.targetUuid } }).then(() => {
-            res.status(200).send("Add Follower");
-          });
-        });
-      }
-    });
+  userDB.findOne({ uuid: req.body.targetUuid }).then((targetUser) => {
+    if (targetUser.followers.indexOf(req.body.currentUuid) !== -1) {
+      userDB.updateOne({ uuid: req.body.targetUuid }, { $pull: { followers: req.body.currentUuid } }).catch((err) => {
+        return res.status(404).send(err);
+      });
+      userDB.updateOne({ uuid: req.body.currentUuid }, { $pull: { following: req.body.targetUuid } }).catch((err) => {
+        return res.status(404).send(err);
+      });
+      res.status(200).send("Remove Follower");
+    } else {
+      userDB.updateOne({ uuid: req.body.targetUuid }, { $push: { followers: req.body.currentUuid } }).catch((err) => {
+        return res.status(404).send(err);
+      });
+      userDB.updateOne({ uuid: req.body.currentUuid }, { $push: { following: req.body.targetUuid } }).catch((err) => {
+        return res.status(404).send(err);
+      });
+      res.status(200).send("Add Follower");
+    }
+  });
 }
 async function likePost(req, res) {
   try {
-    postsDB
-      .find({ _id: new ObjectId(req.body.postId) })
-      .toArray()
-      .then((data) => {
-        checkLikedAndCallUpdate(data);
-      });
+    postsDB.findOne({ _id: new ObjectId(req.body.postId) }).then((data) => {
+      checkLikedAndCallUpdate(data);
+    });
   } catch (err) {
     res.status(404).send(err);
     return;
   }
 
   function checkLikedAndCallUpdate(data) {
-    if (data[0].engagement.likes.includes(req.body.userId) && req.body.action === "REMOVE") {
+    if (data.engagement.likes.includes(req.body.userId) && req.body.action === "REMOVE") {
       updateDB(req.body.action);
-    } else if (!data[0].engagement.likes.includes(req.body.userId) && req.body.action === "ADD") {
+    } else if (!data.engagement.likes.includes(req.body.userId) && req.body.action === "ADD") {
       updateDB(req.body.action);
     }
   }

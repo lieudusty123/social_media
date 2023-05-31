@@ -9,9 +9,7 @@ import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
 import "./UserProfile_Styling/UserProfile.css";
 import "../Feed/feed_styling/feed.css";
 import UserProfileSkeleton from "./UserProfileSkeleton";
-const defaultImage = lazy(() =>
-  import("../../../files/placeholder_user_image.webp")
-);
+import defaultImage from "../../../files/placeholder_user_image.webp";
 const UserNotFound = lazy(() => import("../UserNotFound/UserNotFound"));
 function UserProfile() {
   const params = useParams();
@@ -38,9 +36,7 @@ function UserProfile() {
         setFollowButton(() => {
           if (res.data.userData[0].uuid === data.userId) {
             return false;
-          } else if (
-            res.data.userData[0].followers.indexOf(data.userId) === -1
-          ) {
+          } else if (res.data.userData[0].followers.indexOf(data.userId) === -1) {
             setFollowButtonStyle({
               backgroundColor: "#8AC3F2",
               color: "black",
@@ -89,14 +85,11 @@ function UserProfile() {
       });
   }
   function setImageChange() {
-    profileImage.current.src = URL.createObjectURL(
-      changeImageRef.current["files"][0]
-    );
+    profileImage.current.src = URL.createObjectURL(changeImageRef.current["files"][0]);
     setShowChangeButtons(true);
   }
   function cancelImageChange() {
-    profileImage.current.src =
-      userData.image === "default" ? defaultImage : userData.image;
+    profileImage.current.src = userData.image === "default" ? defaultImage : userData.image;
     setShowChangeButtons(false);
   }
   function changeIcon() {
@@ -143,16 +136,11 @@ function UserProfile() {
                       >
                         <img
                           ref={profileImage}
-                          src={
-                            userData.image === "default"
-                              ? defaultImage
-                              : userData.image
-                          }
+                          src={userData.image === "default" ? defaultImage : userData.image}
                           alt=""
                           onMouseEnter={() => {
                             cameraIconRef.current.style.display = "block";
-                            profileImage.current.style.filter =
-                              "brightness(0.75)";
+                            profileImage.current.style.filter = "brightness(0.75)";
                           }}
                           onMouseLeave={() => {
                             cameraIconRef.current.style.display = "none";
@@ -198,8 +186,7 @@ function UserProfile() {
                           }}
                           onMouseEnter={() => {
                             cameraIconRef.current.style.display = "block";
-                            profileImage.current.style.filter =
-                              "brightness(0.75)";
+                            profileImage.current.style.filter = "brightness(0.75)";
                           }}
                           onMouseLeave={() => {
                             cameraIconRef.current.style.display = "none";
@@ -222,11 +209,7 @@ function UserProfile() {
                       >
                         <img
                           ref={profileImage}
-                          src={
-                            userData.image === "default"
-                              ? defaultImage
-                              : userData.image
-                          }
+                          src={userData.image === "default" ? defaultImage : userData.image}
                           alt=""
                         />
                       </div>
@@ -237,11 +220,7 @@ function UserProfile() {
                 <div className="profile-user-settings">
                   <h1 className="profile-user-name">{userData.uuid}</h1>
 
-                  {userData.uuid === data.userId && (
-                    <button className="profile-page btn profile-edit-btn">
-                      Edit
-                    </button>
-                  )}
+                  {userData.uuid === data.userId && <button className="profile-page btn profile-edit-btn">Edit</button>}
                   {userData.uuid !== data.userId && followButton && (
                     <button
                       className="profile-page btn profile-edit-btn"
@@ -266,32 +245,17 @@ function UserProfile() {
                 <div className="profile-stats">
                   <ul>
                     <li>
-                      <span className="profile-stat-count">
-                        {userData.posts.length}
-                      </span>{" "}
-                      post{userData.posts.length > 1 && "s"}
+                      <span className="profile-stat-count">{userData.posts.length}</span> post
+                      {userData.posts.length > 1 && "s"}
                     </li>
                     <li>
-                      <span className="profile-stat-count">
-                        {userData.followers.length}
-                      </span>{" "}
-                      follower{userData.followers.length > 1 && "s"}
+                      <span className="profile-stat-count">{userData.followers.length}</span> follower
+                      {userData.followers.length > 1 && "s"}
                     </li>
                     <li>
-                      <span className="profile-stat-count">
-                        {userData.following.length}
-                      </span>{" "}
-                      following
+                      <span className="profile-stat-count">{userData.following.length}</span> following
                     </li>
                   </ul>
-                </div>
-
-                <div className="profile-bio">
-                  <p>
-                    <span className="profile-real-name">{userData.name}</span>{" "}
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit
-                    📷✈️🏕️
-                  </p>
                 </div>
               </div>
             </div>

@@ -35,7 +35,11 @@ function unixToRelativeTime(unixTimestamp) {
     return `${years} year${years === 1 ? "" : "s"} ago`;
   }
 }
+function currentTimeToUnix() {
+  return Math.round(new Date().getTime() / 1000);
+}
 module.exports = {
   invokeIf,
   unixToRelativeTime,
+  currentTimeToUnix,
 };
