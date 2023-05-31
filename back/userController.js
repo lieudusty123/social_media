@@ -19,6 +19,7 @@ const { latestFollowingNotEngaged, followingNotEngaged, followingEngaged,
 const { invokeIf, unixToRelativeTime, currentTimeToUnix } = require("./serverFunctions/generalFunctions");
 const { isEmailAvailable, isUuidAvailable } = require("./serverFunctions/mongoSpecifics");
 const { User } = require("./serverFunctions/classes");
+const { checkLikedAndCallUpdate } = require("./serverFunctions/likePost");
 // General Functions
 
 async function signUp(req, res) {
@@ -77,25 +78,26 @@ async function updateUserTime(req, res) {
 }
 
 async function newPost(req, res) {
-  let currentUnixTime = currentTimeToUnix();
   let userName = await userDB.findOne({ uuid: req.body.userId }, { name: 1 }).catch((err) => res.status(404).send(err));
 
-  let newPost = {
+  let newPostData = {
     files: [req.body.image],
     userName: {
       uuid: req.body.userId,
       name: userName.name,
     },
     title: req.body.title,
-    date: currentUnixTime,
+    date: currentTimeToUnix(),
     engagement: {
       likes: [],
       comments: [],
     },
   };
-  let addPostToDB = await postsDB.insertOne(newPost);
-  await userDB.updateOne({ uuid: req.body.userId }, { $push: { posts: addPostToDB.insertedId } });
-  res.status(200).send("posted!");
+  let addPostToDB = await postsDB.insertOne(newPostData);
+  userDB
+    .updateOne({ uuid: req.body.userId }, { $push: { posts: addPostToDB.insertedId } })
+    .then(() => res.status(200).send("posted!"))
+    .catch((err) => res.status(404).send(err));
 }
 async function allPosts(req, res) {
   try {
@@ -144,62 +146,31 @@ async function getUserImage(req, res) {
 async function follow(req, res) {
   userDB.findOne({ uuid: req.body.targetUuid }).then((targetUser) => {
     if (targetUser.followers.indexOf(req.body.currentUuid) !== -1) {
-      userDB.updateOne({ uuid: req.body.targetUuid }, { $pull: { followers: req.body.currentUuid } }).catch((err) => {
-        return res.status(404).send(err);
-      });
-      userDB.updateOne({ uuid: req.body.currentUuid }, { $pull: { following: req.body.targetUuid } }).catch((err) => {
-        return res.status(404).send(err);
-      });
-      res.status(200).send("Remove Follower");
+      userDB
+        .updateOne({ uuid: req.body.targetUuid }, { $pull: { followers: req.body.currentUuid } })
+        .catch((err) => res.status(404).send(err));
+      userDB
+        .updateOne({ uuid: req.body.currentUuid }, { $pull: { following: req.body.targetUuid } })
+        .catch((err) => res.status(404).send(err));
+      res.status(200).send("Unfollowed");
     } else {
-      userDB.updateOne({ uuid: req.body.targetUuid }, { $push: { followers: req.body.currentUuid } }).catch((err) => {
-        return res.status(404).send(err);
-      });
-      userDB.updateOne({ uuid: req.body.currentUuid }, { $push: { following: req.body.targetUuid } }).catch((err) => {
-        return res.status(404).send(err);
-      });
-      res.status(200).send("Add Follower");
+      userDB
+        .updateOne({ uuid: req.body.targetUuid }, { $push: { followers: req.body.currentUuid } })
+        .catch((err) => res.status(404).send(err));
+      userDB
+        .updateOne({ uuid: req.body.currentUuid }, { $push: { following: req.body.targetUuid } })
+        .catch((err) => res.status(404).send(err));
+      res.status(200).send("Followed");
     }
   });
 }
 async function likePost(req, res) {
-  try {
-    postsDB.findOne({ _id: new ObjectId(req.body.postId) }).then((data) => {
-      checkLikedAndCallUpdate(data);
-    });
-  } catch (err) {
-    res.status(404).send(err);
-    return;
-  }
-
-  function checkLikedAndCallUpdate(data) {
-    if (data.engagement.likes.includes(req.body.userId) && req.body.action === "REMOVE") {
-      updateDB(req.body.action);
-    } else if (!data.engagement.likes.includes(req.body.userId) && req.body.action === "ADD") {
-      updateDB(req.body.action);
-    }
-  }
-
-  function updateDB(action) {
-    if (action === "ADD") {
-      postsDB
-        .updateOne({ _id: new ObjectId(req.body.postId) }, { $push: { "engagement.likes": req.body.userId } })
-        .then(() => {
-          userDB.updateOne(
-            { uuid: req.body.userId },
-            { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } }
-          );
-        })
-        .catch((err) => res.status(404).send(err));
-    } else if (action === "REMOVE") {
-      postsDB
-        .updateOne({ _id: new ObjectId(req.body.postId) }, { $pull: { "engagement.likes": req.body.userId } })
-        .then(() => {
-          userDB.updateOne({ uuid: req.body.userId }, { $pull: { postsEngagement: new ObjectId(req.body.postId) } });
-        })
-        .catch((err) => res.status(404).send(err));
-    } else return;
-  }
+  postsDB
+    .findOne({ _id: new ObjectId(req.body.postId) })
+    .then((targetPost) => {
+      checkLikedAndCallUpdate(targetPost, req.body.action, req.body.userId);
+    })
+    .catch((err) => res.status(404).send(err));
 }
 async function addComment(req, res) {
   try {
@@ -228,62 +199,52 @@ async function addComment(req, res) {
         }
       )
       .then(() => {
-        userDB.updateOne({ uuid: req.body.userId }, { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } });
+        userDB
+          .updateOne({ uuid: req.body.userId }, { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } })
+          .catch((err) => res.status(404).send(err));
       })
       .catch((err) => res.status(404).send(err));
   }
 }
 async function changeIcon(req, res) {
-  try {
-    userDB
-      .find({ uuid: req.body.userId })
-      .toArray()
-      .then((user) => {
-        if (user.length === 0) return;
-        userDB.updateOne(
-          { uuid: req.body.userId },
-          {
-            $set: {
-              image: req.body.image,
-            },
-          }
-        );
-      });
-    res.status(200).send("Image was changed!");
-  } catch (err) {
-    res.status(404).send(err);
-  }
+  userDB
+    .updateOne(
+      { uuid: req.body.userId },
+      {
+        $set: {
+          image: req.body.image,
+        },
+      }
+    )
+    .then(() => res.status(200).send("Image was changed!"))
+    .catch((err) => res.status(404).send(err));
 }
 async function userProfile(req, res) {
-  try {
-    userDB
-      .find({ uuid: req.body.id })
-      .toArray()
-      .then((user) => {
-        if (user.length === 0) return res.status(404).send("user not found");
-        postsDB
-          .find({ "userName.uuid": req.body.id })
-          .sort({ date: -1 })
-          .toArray()
-          .then((postArr) => {
-            res.status(200).send({ userData: user, posts: postArr });
-          });
-      });
-  } catch (err) {
-    res.status(404).send(err);
-  }
+  const getUserDetails = await userDB
+    .findOne({ uuid: req.body.id })
+    .then((user) => {
+      if (user === null) res.status(404).send("user not found");
+      return user;
+    })
+    .catch((err) => res.status(404).send(err));
+
+  await postsDB
+    .find({ "userName.uuid": req.body.id })
+    .sort({ date: -1 })
+    .toArray()
+    .then((postArr) => {
+      res.status(200).send({ userData: getUserDetails, posts: postArr });
+    })
+    .catch((err) => res.status(404).send(err));
 }
 async function search(req, res) {
-  try {
-    userDB
-      .find({ name: { $regex: req.body.searchedInput } })
-      .sort({ followers: -1 })
-      .limit(5)
-      .toArray()
-      .then((data) => res.status(200).send(data));
-  } catch (err) {
-    res.status(404).send(err);
-  }
+  userDB
+    .find({ name: { $regex: req.body.searchedInput } })
+    .sort({ followers: -1 })
+    .limit(5)
+    .toArray()
+    .then((data) => res.status(200).send(data))
+    .catch((err) => res.status(404).send(err));
 }
 
 module.exports = {signUp, login, updateUserTime, newPost, allPosts, getUserImage,
