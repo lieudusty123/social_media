@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState, useRef, lazy } from "react";
+import React, { useContext, useEffect, useState, lazy } from "react";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
 
 import usersContext from "../../../context/usersContext";
-import AllPostsThumbnails from "./UserProfileComponents/AllPostsThumbnail";
+import AllPostsThumbnails from "./UserProfilePosts/AllPostsThumbnail";
 
 import "./UserProfile_Styling/UserProfile.css";
 import "../Feed/feed_styling/feed.css";

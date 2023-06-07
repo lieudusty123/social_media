@@ -54,7 +54,7 @@ export default function ProfileHeaderSettings({ userData }) {
   return (
     <div className="profile-user-settings">
       <h1 className="profile-user-name">{userData.uuid}</h1>
-      {userData.uuid !== data.userId && followButton && (
+      {data.userId && userData.uuid !== data.userId && followButton && (
         <button
           className="profile-page btn profile-edit-btn"
           onClick={follow}

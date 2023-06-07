@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
-import styles from "./PostThumbnailModal_styling.module.css";
+import styles from "./postThumbnailModal_Styling/PostThumbnailModal_styling.module.css";
 import placeHolderUserImage from "../../../../../files/placeholder_user_image.webp";
 import usersContext from "../../../../../context/usersContext";
 
@@ -52,54 +52,47 @@ const PostThumbnailModal = (props) => {
 
     return () => {
       props.postModalRef();
-      // Cleanup the event listener when the component unmounts
       modalEle.removeEventListener("click", handleClickOutside);
     };
   }, [props]);
   function sendNewComment(e) {
     e.preventDefault();
-    if (data.userName && commentContent.length > 0) {
-      let localArr = (
-        <li key={uuidv4()}>
-          <div
-            className={styles["comment_name"]}
-            onClick={() => {
-              props.postModalRef();
-              navigate(`/p/${data.userId}`);
-            }}
-          >
-            - {data.userName}
-          </div>
-          <div className={styles["comment_content"]}>{commentContent}</div>
-        </li>
-      );
-      setMappedComments((oldElements) => [...oldElements, localArr]);
+    if (!data.userName || commentContent.length <= 0) return;
 
-      axios.post("/add-comment", {
-        userId: data.userId,
-        userName: data.userName,
-        postId: props.post._id,
-        content: commentContent,
-      });
-      setCommentContent("");
-    } else {
-    }
+    let localArr = (
+      <li key={uuidv4()}>
+        <div
+          className={styles["comment_name"]}
+          onClick={() => {
+            props.postModalRef();
+            navigate(`/p/${data.userId}`);
+          }}
+        >
+          - {data.userName}
+        </div>
+        <div className={styles["comment_content"]}>{commentContent}</div>
+      </li>
+    );
+    setMappedComments((oldElements) => [...oldElements, localArr]);
+
+    axios.post("/add-comment", {
+      userId: data.userId,
+      userName: data.userName,
+      postId: props.post._id,
+      content: commentContent,
+    });
+    setCommentContent("");
   }
   function submitLike() {
     if (timeOut) {
       clearTimeout(timeOut);
     }
     if (data.userId !== undefined) {
-      if (
-        +likeCounterRef.current.textContent ===
-        props.post.engagement.likes.length
-      ) {
-        likeCounterRef.current.textContent =
-          +likeCounterRef.current.textContent + 1;
+      if (+likeCounterRef.current.textContent === props.post.engagement.likes.length) {
+        likeCounterRef.current.textContent = +likeCounterRef.current.textContent + 1;
         timeOut = setTimeout(() => axiosLike("ADD"), 500);
       } else {
-        likeCounterRef.current.textContent =
-          +likeCounterRef.current.textContent - 1;
+        likeCounterRef.current.textContent = +likeCounterRef.current.textContent - 1;
         timeOut = setTimeout(() => axiosLike("REMOVE"), 500);
       }
     } else {
@@ -118,14 +111,8 @@ const PostThumbnailModal = (props) => {
       <div className={styles["post_info"]}>
         <div className={styles["post_info_header"]}>
           <div className={styles["user_image_container"]}>
-            <img
-              className={styles["user_image"]}
-              src={userImage === "default" ? placeHolderUserImage : userImage}
-              alt="user icon"
-            />
-            <div className={styles["user_name"]}>
-              {props.post.userName.name}
-            </div>
+            <img className={styles["user_image"]} src={userImage === "default" ? placeHolderUserImage : userImage} alt="user icon" />
+            <div className={styles["user_name"]}>{props.post.userName.name}</div>
           </div>
           <div className={styles["section_title"]}>Description</div>
           <div className={styles["post_description"]}>{props.post.title}</div>
@@ -151,17 +138,16 @@ const PostThumbnailModal = (props) => {
               onChange={(e) => setCommentContent(e.target.value)}
               value={commentContent}
               ref={addCommentRef}
+              disabled={data.email ? false : true}
             />
-            <button type="submit">Post</button>
+            <button type="submit" disabled={data.email ? false : true}>
+              Post
+            </button>
           </form>
         </div>
       </div>
       <div className={styles["post_body"]}>
-        <img
-          src={props.post.files[0]}
-          alt="uploaded post"
-          onDoubleClick={submitLike}
-        />
+        <img src={props.post.files[0]} alt="uploaded post" onDoubleClick={submitLike} />
       </div>
     </div>,
     document.getElementById("post_modal")

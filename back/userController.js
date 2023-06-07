@@ -18,7 +18,7 @@ const { latestFollowingNotEngaged, followingNotEngaged, followingEngaged,
 // General Functions
 const { invokeIf, unixToRelativeTime, currentTimeToUnix } = require("./serverFunctions/generalFunctions");
 const { isEmailAvailable, isUuidAvailable } = require("./serverFunctions/mongoSpecifics");
-const { User } = require("./serverFunctions/classes");
+const { UserClassSchema } = require("./serverFunctions/classes");
 const { checkLikedAndCallUpdate } = require("./serverFunctions/likePost");
 // General Functions
 
@@ -31,8 +31,7 @@ async function signUp(req, res) {
   const hashPasswordAndFinishRegister = async (pass, saltAmount) => {
     return await bcrypt.genSalt(saltAmount).then((salt) => {
       bcrypt.hash(pass, salt).then((hash) => {
-        let userSchem = new User(req.body.name, req.body.id, req.body.image, req.body.email, hash);
-        console.log(userSchem);
+        let userSchem = new UserClassSchema(req.body.name, req.body.id, req.body.image, req.body.email, hash);
         userDB
           .insertOne(userSchem)
           .then(() => {
@@ -100,8 +99,17 @@ async function newPost(req, res) {
     .catch((err) => res.status(404).send(err));
 }
 async function allPosts(req, res) {
-  try {
-    async function getUserPosts() {
+  const normalFeed = async () => {
+    const resArr = await postsDB
+      .find()
+      .sort({ date: -1 })
+      .limit(20)
+      .toArray()
+      .catch((err) => res.status(404).send(err));
+    getImages(resArr);
+  };
+  const customFeed = async () => {
+    try {
       const user = await userDB.findOne({ uuid: req.body.currentUser });
       let resArr = [];
       let postHardLimit = 20 - resArr.length;
@@ -111,27 +119,33 @@ async function allPosts(req, res) {
       resArr.push(...(await invokeIf(followingEngaged, [user, postHardLimit], postHardLimit)));
       resArr.push(...(await invokeIf(notFollowingLatest, [user, postHardLimit], postHardLimit)));
       resArr.push(...(await invokeIf(notFollowing, [user, postHardLimit], postHardLimit)));
-
-      let storedUsers = [];
-      let storedImages = [];
-
-      for (let i = 0; i < resArr.length; i++) {
-        resArr[i].date = unixToRelativeTime(resArr[i].date);
-        if (storedUsers.indexOf(resArr[i].userName.name) !== -1) {
-          resArr[i].userName.image = storedImages[storedUsers.indexOf(resArr[i].userName.name)];
-        } else {
-          await userDB.findOne({ uuid: resArr[i].userName.uuid }, { image: 1 }).then((imageRes) => {
-            storedUsers.push(resArr[i].userName.name);
-            storedImages.push(imageRes.image);
-            resArr[i].userName.image = imageRes.image;
-          });
-        }
-      }
-      res.status(200).send(resArr);
+      getImages(resArr);
+    } catch (err) {
+      res.status(404).send(err);
     }
-    getUserPosts();
-  } catch (err) {
-    res.status(404).send(err);
+  };
+  const getImages = async (resArr) => {
+    let storedUsers = [];
+    let storedImages = [];
+
+    for (let i = 0; i < resArr.length; i++) {
+      resArr[i].date = unixToRelativeTime(resArr[i].date);
+      if (storedUsers.indexOf(resArr[i].userName.name) !== -1) {
+        resArr[i].userName.image = storedImages[storedUsers.indexOf(resArr[i].userName.name)];
+      } else {
+        await userDB.findOne({ uuid: resArr[i].userName.uuid }, { image: 1 }).then((imageRes) => {
+          storedUsers.push(resArr[i].userName.name);
+          storedImages.push(imageRes.image);
+          resArr[i].userName.image = imageRes.image;
+        });
+      }
+    }
+    res.status(200).send(resArr);
+  };
+  if (req.body.currentUser) {
+    customFeed();
+  } else {
+    normalFeed();
   }
 }
 async function getUserImage(req, res) {
