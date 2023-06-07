@@ -9,7 +9,7 @@ export default function ProfileHeaderSettings({ userData }) {
   const data = useContext(usersContext);
   useEffect(() => {
     setFollowButton(() => {
-      if (userData.uuid === data.userId) {
+      if (userData.uuid === data.userId || data.userId === undefined) {
         return false;
       } else if (userData.followers.indexOf(data.userId) === -1) {
         setFollowButtonStyle({
@@ -22,7 +22,7 @@ export default function ProfileHeaderSettings({ userData }) {
         return "following";
       }
     });
-  }, []);
+  }, [data.userId, userData.followers, userData.uuid]);
 
   function follow() {
     axios
