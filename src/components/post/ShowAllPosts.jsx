@@ -13,7 +13,7 @@ const ShowAllPosts = () => {
     document.querySelector("body").style.overflow = "hidden";
     axios
       .post("/all-posts", {
-        currentUser: data.userId,
+        currentUser: data.userId ? data.userId : false,
       })
       .then((res) => {
         let arr = [];

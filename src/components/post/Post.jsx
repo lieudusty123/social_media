@@ -16,9 +16,7 @@ const Post = (props) => {
   const [commentContent, setCommentContent] = useState("");
   const data = useContext(usersContext);
   const [mappedComments, setMappedComments] = useState([]);
-  const [commentNum, setCommentNum] = useState(
-    props.data.engagement.comments.length
-  );
+  const [commentNum, setCommentNum] = useState(props.data.engagement.comments.length);
   const [isFullTitle, setIsFullTitle] = useState(false);
   const navigate = useNavigate();
   function sendNewComment(e) {
@@ -97,18 +95,14 @@ const Post = (props) => {
       </li>
     ));
     setMappedComments(() => localArr);
-    postDescRef.current.getBoundingClientRect().width >
-    postDescRef.current.parentElement.getBoundingClientRect().width
+    postDescRef.current.getBoundingClientRect().width > postDescRef.current.parentElement.getBoundingClientRect().width
       ? (postDescRef.current.style.cursor = "pointer")
       : (postDescRef.current.style.cursor = "auto");
   }, [props.data, navigate]);
 
   useEffect(() => {
     if (data.userId === undefined) {
-      likeButton.current.className =
-        props.data.engagement.likes.indexOf(data.userId) > -1
-          ? "full"
-          : "empty";
+      likeButton.current.className = props.data.engagement.likes.indexOf(data.userId) > -1 ? "full" : "empty";
       likeButton.current.src =
         props.data.engagement.likes.indexOf(data.userId) > -1
           ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgNC4yNDhjLTMuMTQ4LTUuNDAyLTEyLTMuODI1LTEyIDIuOTQ0IDAgNC42NjEgNS41NzEgOS40MjcgMTIgMTUuODA4IDYuNDMtNi4zODEgMTItMTEuMTQ3IDEyLTE1LjgwOCAwLTYuNzkyLTguODc1LTguMzA2LTEyLTIuOTQ0eiIvPjwvc3ZnPg=="
@@ -123,11 +117,7 @@ const Post = (props) => {
           <img
             className="post_header_image"
             alt="user icon"
-            src={
-              props.data.userName.image === "default"
-                ? defaultImage
-                : props.data.userName.image
-            }
+            src={props.data.userName.image === "default" ? defaultImage : props.data.userName.image}
             onClick={() => {
               navigate(`/p/${props.data.userName.uuid}`);
             }}
@@ -143,22 +133,13 @@ const Post = (props) => {
         </div>
       </div>
       <div className="post_body">
-        <img
-          src={props.data.files[0]}
-          className="post_body_image"
-          alt="post img"
-          onDoubleClick={submitLike}
-        />
+        <img src={props.data.files[0]} className="post_body_image" alt="post img" onDoubleClick={submitLike} />
         <div className="post_body_buttons_container">
           <button className="post_body_buttons" onClick={submitLike}>
             <img
               alt="like"
               ref={likeButton}
-              className={
-                props.data.engagement.likes.indexOf(data.userId) > -1
-                  ? "full"
-                  : "empty"
-              }
+              className={props.data.engagement.likes.indexOf(data.userId) > -1 ? "full" : "empty"}
               src={
                 props.data.engagement.likes.indexOf(data.userId) > -1
                   ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTIgNC4yNDhjLTMuMTQ4LTUuNDAyLTEyLTMuODI1LTEyIDIuOTQ0IDAgNC42NjEgNS41NzEgOS40MjcgMTIgMTUuODA4IDYuNDMtNi4zODEgMTItMTEuMTQ3IDEyLTE1LjgwOCAwLTYuNzkyLTguODc1LTguMzA2LTEyLTIuOTQ0eiIvPjwvc3ZnPg=="
@@ -207,9 +188,7 @@ const Post = (props) => {
           </div>
         </div>
       </div>
-      {mappedComments.length > 0 && (
-        <hr style={{ width: "calc(100% - 20px)", color: "rgb(6,6,6)" }} />
-      )}
+      {mappedComments.length > 0 && <hr style={{ width: "calc(100% - 20px)", color: "rgb(6,6,6)" }} />}
       <div className="post_footer">
         <ul className="post_comment_list" ref={commentList}>
           {mappedComments}
@@ -220,8 +199,11 @@ const Post = (props) => {
             onChange={(e) => setCommentContent(e.target.value)}
             value={commentContent}
             ref={addCommentRef}
+            disabled={data.email ? false : true}
           />
-          <button type="submit">Post</button>
+          <button type="submit" disabled={data.email ? false : true}>
+            Post
+          </button>
         </form>
       </div>
     </div>

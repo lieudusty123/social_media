@@ -18,47 +18,42 @@ const Nav = () => {
 
   function fetchUserList(data) {
     clearInterval(interval);
-    if (data.length > 0) {
-      axios
-        .post("/search", {
-          searchedInput: data,
-        })
-        .then((res) => {
-          let tempArr = [];
-          res.data.forEach((user) => {
-            tempArr.push(
-              <li
-                onClick={() => {
+    if (data.length <= 0) return setAutoComplete([]);
+
+    axios
+      .post("/search", {
+        searchedInput: data,
+      })
+      .then((res) => {
+        let tempArr = [];
+        res.data.forEach((user) => {
+          tempArr.push(
+            <li
+              onClick={() => {
+                setSearchInputState("");
+                setAutoComplete([]);
+                navigate(`/p/${user.uuid}`);
+              }}
+              onAuxClick={(e) => {
+                if (e.button === 1) {
                   setSearchInputState("");
                   setAutoComplete([]);
                   navigate(`/p/${user.uuid}`);
-                }}
-                onAuxClick={(e) => {
-                  if (e.button === 1) {
-                    setSearchInputState("");
-                    setAutoComplete([]);
-                    navigate(`/p/${user.uuid}`);
-                  }
-                }}
-                key={uuidv4()}
-              >
-                <img
-                  src={user.image === "default" ? defaultImage : user.image}
-                  alt="new profile pic"
-                />
-                <div className="user-detail-wrapper">
-                  <div className="user-name">{user.name}</div>
-                  <div className="user-uuid">{user.uuid}</div>
-                </div>
-              </li>
-            );
-          });
-          setAutoComplete(tempArr);
-          setNavLoading(false);
+                }
+              }}
+              key={uuidv4()}
+            >
+              <img src={user.image === "default" ? defaultImage : user.image} alt="new profile pic" />
+              <div className="user-detail-wrapper">
+                <div className="user-name">{user.name}</div>
+                <div className="user-uuid">{user.uuid}</div>
+              </div>
+            </li>
+          );
         });
-    } else {
-      setAutoComplete([]);
-    }
+        setAutoComplete(tempArr);
+        setNavLoading(false);
+      });
   }
 
   function refreshTimer(data) {
@@ -135,28 +130,45 @@ const Nav = () => {
           </ul>
         )}
       </form>
-      <div className="user_image_container">
-        {data.image !== undefined && (
-          <img
-            onClick={() => userOptionsRef.current.classList.toggle("shown")}
-            src={data.image === "default" ? defaultImage : data.image}
-            className="user_image"
-            alt="current profile pic"
-          />
-        )}
-        {data.image === undefined && (
-          <img
-            onClick={() => userOptionsRef.current.classList.toggle("shown")}
-            src={defaultImage}
-            className="user_image"
-            alt="current profile pic"
-          />
-        )}
-        <ul ref={userOptionsRef} className="user_option_ul">
-          <li onClick={() => navigate(`/p/${data.userId}`)}>View Profile</li>
-          <li onClick={logout}>Log out</li>
-        </ul>
-      </div>
+
+      {data.email && (
+        <div className="user_image_container">
+          {data.image !== undefined && (
+            <img
+              onClick={() => userOptionsRef.current.classList.toggle("shown")}
+              src={data.image === "default" ? defaultImage : data.image}
+              className="user_image"
+              alt="current profile pic"
+            />
+          )}
+          {data.image === undefined && (
+            <img
+              onClick={() => userOptionsRef.current.classList.toggle("shown")}
+              src={defaultImage}
+              className="user_image"
+              alt="current profile pic"
+            />
+          )}
+          <ul ref={userOptionsRef} className="user_option_ul">
+            <li onClick={() => navigate(`/p/${data.userId}`)}>View Profile</li>
+            <li onClick={logout}>Log out</li>
+          </ul>
+        </div>
+      )}
+      {data.email ? (
+        <div className="user_image_container"></div>
+      ) : (
+        <BackButton
+          handleClick={() => {
+            navigate("/login");
+          }}
+          customStyle={{
+            margin: "0",
+          }}
+        >
+          Sign In
+        </BackButton>
+      )}
     </nav>
   );
 };

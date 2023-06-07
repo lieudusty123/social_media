@@ -1,4 +1,4 @@
-class User {
+class UserClassSchema {
   constructor(name, uuid, image, email, password) {
     this.name = name;
     this.uuid = uuid;
@@ -17,5 +17,5 @@ class User {
   }
 }
 module.exports = {
-  User,
+  UserClassSchema,
 };
