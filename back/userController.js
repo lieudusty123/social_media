@@ -24,22 +24,20 @@ const { checkLikedAndCallUpdate } = require("./serverFunctions/likePost");
 
 async function signUp(req, res) {
   const checkEmailAvailability = await isEmailAvailable(req.body.email);
-  if (!checkEmailAvailability) return res.status(409).send("Email is already registered");
+  if (!checkEmailAvailability) return res.status(401).send("Email is already registered");
   const checkUuidAvailability = await isUuidAvailable(req.body.id);
-  if (!checkUuidAvailability) return res.status(409).send("This ID is already in use!");
+  if (!checkUuidAvailability) return res.status(401).send("This ID is already in use!");
 
   const hashPasswordAndFinishRegister = async (pass, saltAmount) => {
-    return await bcrypt.genSalt(saltAmount).then((salt) => {
-      bcrypt.hash(pass, salt).then((hash) => {
-        let userSchem = new UserClassSchema(req.body.name, req.body.id, req.body.image, req.body.email, hash);
-        userDB
-          .insertOne(userSchem)
-          .then(() => {
-            res.status(200).send(userSchem);
-          })
-          .catch((err) => res.status(404).send(err));
-      });
-    });
+    const genSalt = await bcrypt.genSalt(saltAmount);
+    const hashedPass = await bcrypt.hash(pass, genSalt);
+    const userSchem = new UserClassSchema(req.body.name, req.body.id, req.body.image, req.body.email, hashedPass);
+    userDB
+      .insertOne(userSchem)
+      .then(() => {
+        res.status(200).send(userSchem);
+      })
+      .catch((err) => res.status(500).send(err));
   };
   hashPasswordAndFinishRegister(req.body.password, 12);
 }
@@ -50,11 +48,11 @@ async function login(req, res) {
 
   let mongoCall = await userDB
     .findOne({ "private_details.email": email }, { "private_details.password": 1 })
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 
-  if (mongoCall === null) return res.status(404).send("User not found");
+  if (mongoCall === null) return res.status(401).send("User not found");
   let hashMatch = await bcrypt.compare(password, mongoCall.private_details.password);
-  if (!hashMatch) return res.status(404).send("Incorrect password");
+  if (!hashMatch) return res.status(401).send("Incorrect password");
 
   let returnVal = {
     res: "connected",
@@ -72,12 +70,12 @@ async function updateUserTime(req, res) {
       res.status(200);
     })
     .catch((err) => {
-      res.status(404).send(err);
+      res.status(500).send(err);
     });
 }
 
 async function newPost(req, res) {
-  let userName = await userDB.findOne({ uuid: req.body.userId }, { name: 1 }).catch((err) => res.status(404).send(err));
+  let userName = await userDB.findOne({ uuid: req.body.userId }, { name: 1 }).catch((err) => res.status(500).send(err));
 
   let newPostData = {
     files: [req.body.image],
@@ -96,7 +94,7 @@ async function newPost(req, res) {
   userDB
     .updateOne({ uuid: req.body.userId }, { $push: { posts: addPostToDB.insertedId } })
     .then(() => res.status(200).send("posted!"))
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 }
 async function allPosts(req, res) {
   const normalFeed = async () => {
@@ -105,7 +103,7 @@ async function allPosts(req, res) {
       .sort({ date: -1 })
       .limit(20)
       .toArray()
-      .catch((err) => res.status(404).send(err));
+      .catch((err) => res.status(500).send(err));
     getImages(resArr);
   };
   const customFeed = async () => {
@@ -162,18 +160,18 @@ async function follow(req, res) {
     if (targetUser.followers.indexOf(req.body.currentUuid) !== -1) {
       userDB
         .updateOne({ uuid: req.body.targetUuid }, { $pull: { followers: req.body.currentUuid } })
-        .catch((err) => res.status(404).send(err));
+        .catch((err) => res.status(500).send(err));
       userDB
         .updateOne({ uuid: req.body.currentUuid }, { $pull: { following: req.body.targetUuid } })
-        .catch((err) => res.status(404).send(err));
+        .catch((err) => res.status(500).send(err));
       res.status(200).send("Unfollowed");
     } else {
       userDB
         .updateOne({ uuid: req.body.targetUuid }, { $push: { followers: req.body.currentUuid } })
-        .catch((err) => res.status(404).send(err));
+        .catch((err) => res.status(500).send(err));
       userDB
         .updateOne({ uuid: req.body.currentUuid }, { $push: { following: req.body.targetUuid } })
-        .catch((err) => res.status(404).send(err));
+        .catch((err) => res.status(500).send(err));
       res.status(200).send("Followed");
     }
   });
@@ -184,7 +182,7 @@ async function likePost(req, res) {
     .then((targetPost) => {
       checkLikedAndCallUpdate(targetPost, req.body.action, req.body.userId);
     })
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 }
 async function addComment(req, res) {
   try {
@@ -215,9 +213,9 @@ async function addComment(req, res) {
       .then(() => {
         userDB
           .updateOne({ uuid: req.body.userId }, { $addToSet: { postsEngagement: new ObjectId(req.body.postId) } })
-          .catch((err) => res.status(404).send(err));
+          .catch((err) => res.status(500).send(err));
       })
-      .catch((err) => res.status(404).send(err));
+      .catch((err) => res.status(500).send(err));
   }
 }
 async function changeIcon(req, res) {
@@ -231,7 +229,7 @@ async function changeIcon(req, res) {
       }
     )
     .then(() => res.status(200).send("Image was changed!"))
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 }
 async function userProfile(req, res) {
   const getUserDetails = await userDB
@@ -240,7 +238,7 @@ async function userProfile(req, res) {
       if (user === null) res.status(404).send("user not found");
       return user;
     })
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 
   await postsDB
     .find({ "userName.uuid": req.body.id })
@@ -249,7 +247,7 @@ async function userProfile(req, res) {
     .then((postArr) => {
       res.status(200).send({ userData: getUserDetails, posts: postArr });
     })
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 }
 async function search(req, res) {
   userDB
@@ -258,7 +256,7 @@ async function search(req, res) {
     .limit(5)
     .toArray()
     .then((data) => res.status(200).send(data))
-    .catch((err) => res.status(404).send(err));
+    .catch((err) => res.status(500).send(err));
 }
 
 module.exports = {signUp, login, updateUserTime, newPost, allPosts, getUserImage,
